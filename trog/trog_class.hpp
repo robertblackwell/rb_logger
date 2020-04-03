@@ -1,34 +1,41 @@
-#ifndef RBLOGGER_class_HPP
-#define RBLOGGER_class_HPP
+#ifndef trog_guard_class_HPP
+#define trog_guard_class_HPP
 //
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <cstdint>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
 
-// class RBLogger::Logger;    
+// class Trog::Trogger;    
 // extern bool logger_enabled;
 // extern LogLevelType globalThreshold;
-// extern Logger activeLogger;
+// extern Trogger activeTrogger;
 // }
 
 
-namespace RBLogger {
+namespace Trog {
 
 extern bool logger_enabled;
 
-typedef long LogLevelType;
-
-enum LogLevelTypeValues: long {
-    LogLevelTrace = 0x01,
-    LogLevelCTorTrace = 0x02,
-    LogLevelFDTrace = 0x04,
-    LogLevelError = 1 << 3,
-    LogLevelWarn =  2 << 3,
-    LogLevelInfo =  3 << 3,
-    LogLevelDebug = 4 << 3,
-    LogLevelVerbose = 5 << 3,
+typedef int32_t LogLevelType;
+/** The righthand 8 bits are a bit mask for Trace levels*/
+const int LevelBitWidth = 64;
+const int TraceBits = 8;
+enum LogLevelTypeValues: int64_t {
+    LogLevelCTorTrace   = 0b00000001,
+    LogLevelFDTrace     = 0b00000010,
+    LogLevelTrace       = 0b00000100,
+    LogLevelTrace2      = 0b00001000,
+    LogLevelTrace3      = 0b00010000,
+    LogLevelTrace4      = 0b00100000,
+    /** space for future use*/
+    LogLevelError       = 1 << TraceBits,
+    LogLevelWarn        = 2 << TraceBits,
+    LogLevelInfo        = 3 << TraceBits,
+    LogLevelDebug       = 4 << TraceBits,
+    LogLevelVerbose     = 5 << TraceBits,
 };
 
 /** free functions */
@@ -44,16 +51,17 @@ std::ostringstream& preamble(
     std::string function_name,
     long linenumber
 );
+bool testLevelForActive(long level, long threshold );
 
-class Logger
+class Trogger
 {
 public:
 
-static Logger activeLogger;
+static Trogger activeTrogger;
 static LogLevelType globalThreshold;
 static LogLevelType allEnabled;
 
-Logger(std::ostream& os = std::cerr);
+Trogger(std::ostream& os = std::cerr);
     
 void logWithFormat(
     LogLevelType level, LogLevelType threshold, const char* file_name, const char* func_name, int line_number, char* format, ...);
@@ -125,7 +133,9 @@ void fdTraceLog(
     const char* func_name,
     int line_number,
     long fd_arg);
-    
+
+bool levelIsActive(LogLevelType lvl, LogLevelType threshold);
+
 private:
     std::mutex _loggerMutex;
 
@@ -134,7 +144,6 @@ private:
 
     std::string p_className(std::string& func_name);
     bool enabled();
-    bool levelIsActive(LogLevelType lvl, LogLevelType threshold);
     void myprint(std::ostringstream& os);
 
     template <typename T, typename... Types>

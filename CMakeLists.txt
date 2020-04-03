@@ -28,8 +28,11 @@ set(TEST_LINK_LIBS
 	${VENDOR_DIR}/lib/libboost_filesystem.a 
 	)
 
+include(CTest) 
+enable_testing()
+	
 set(TEST_INCLUDE_DIRS 
-	SYSTEM ${VENDOR_DIR}/include)
+	SYSTEM ${PROJECT_DIR} ${VENDOR_DIR}/include)
 # find_program(iwyu_path NAMES include-what-you-use iwyu)
 # if(NOT iwyu_path)
 #   message(FATAL_ERROR "Could not find the program include-what-you-use")

@@ -1,44 +1,44 @@
-#ifndef RBLOGGER_guard_macros_HPP
-#define RBLOGGER_guard_macros_HPP
+#ifndef trog_guard_macros_HPP
+#define trog_guard_macros_HPP
 //
 #include <iostream>
 #include <sstream>
 #include <set>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include "rb_logger_config.hpp"
-#include "rb_logger_class.hpp"
+#include <trog/trog_config.hpp>
+#include <trog/trog_class.hpp>
     
-#define LOG_LEVEL_ERROR     RBLogger::LogLevelError
-#define LOG_LEVEL_WARN      RBLogger::LogLevelWarn
-#define LOG_LEVEL_TRACE     RBLogger::LogLevelTrace
-#define LOG_LEVEL_TORTRACE  RBLogger::LogLevelCTorTrace
-#define LOG_LEVEL_FDTRACE   RBLogger::LogLevelFDTrace
-#define LOG_LEVEL_INFO      RBLogger::LogLevelInfo
-#define LOG_LEVEL_DEBUG     RBLogger::LogLevelDebug
-#define LOG_LEVEL_VERBOSE   RBLogger::LogLevelVerbose
-#define LOG_LEVEL_MAX       RBLogger::LogLevelVerbose
+#define LOG_LEVEL_ERROR     Trog::LogLevelError
+#define LOG_LEVEL_WARN      Trog::LogLevelWarn
+#define LOG_LEVEL_TRACE     Trog::LogLevelTrace
+#define LOG_LEVEL_TORTRACE  Trog::LogLevelCTorTrace
+#define LOG_LEVEL_FDTRACE   Trog::LogLevelFDTrace
+#define LOG_LEVEL_INFO      Trog::LogLevelInfo
+#define LOG_LEVEL_DEBUG     Trog::LogLevelDebug
+#define LOG_LEVEL_VERBOSE   Trog::LogLevelVerbose
+#define LOG_LEVEL_MAX       Trog::LogLevelVerbose
 
 /// define the macro that sets loglevel for a file
-#if ! defined(RBLOGGER_ENABLED)
+#if ! defined(Trog_ENABLED)
     #define SET_LOGLEVEL(level)
-    #define RBLOGGER_SETLEVEL(level) 
+    #define Trog_SETLEVEL(level) 
 #else
     #define SET_LOGLEVEL(level) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static RBLogger::LogLevelType rbLogLevel = level; \
+    static Trog::LogLevelType rbLogLevel = level; \
     _Pragma("clang diagnostic pop")
 
-    #define RBLOGGER_SETLEVEL(level) \
+    #define Trog_SETLEVEL(level) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static  RBLogger::LogLevelType rbLogLevel = level; \
+    static  Trog::LogLevelType rbLogLevel = level; \
     _Pragma("clang diagnostic pop")
 #endif
 
     
-#if ! defined(RBLOGGER_ENABLED)
+#if ! defined(Trog_ENABLED)
     #define ROBMACROFormatLog(lvl, frmt, ...)
     #define ROBMACROLog(lvl, arg1, ...)
     #define RBLOGTRACE(lvl,  arg1, ...) printf("NO LOG TRACE")
@@ -46,7 +46,7 @@
     #define RBLOGFDTRACE(lvl, arg_fd)
 #else
     #define ROBMACROFormatLog(lvl, frmt, ...) \
-        RBLogger::Logger::activeLogger.logWithFormat(\
+        Trog::Trogger::activeTrogger.logWithFormat(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -57,7 +57,7 @@
             )
 
     #define ROBMACROLog(lvl, arg1, ...) \
-        RBLogger::Logger::activeLogger.vlog(\
+        Trog::Trogger::activeTrogger.vlog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -67,7 +67,7 @@
             /*var args*/    ##__VA_ARGS__\
         )
     #define RBLOGTRACE(lvl, arg1, ...) \
-        RBLogger::Logger::activeLogger.tracelog(\
+        Trog::Trogger::activeTrogger.tracelog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -77,7 +77,7 @@
             /*var args*/    ##__VA_ARGS__\
     )
     #define RBLOGTORTRACE(lvl, arg_this) \
-        RBLogger::Logger::activeLogger.torTraceLog(\
+        Trog::Trogger::activeTrogger.torTraceLog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -86,7 +86,7 @@
             /*this*/        (void*)arg_this \
     )
     #define RBLOGFDTRACE(lvl, arg_fd) \
-        RBLogger::Logger::activeLogger.fdTraceLog(\
+        Trog::Trogger::activeTrogger.fdTraceLog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \

@@ -17,7 +17,7 @@
             "name": "(gdb) Single test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cmake-build-debug/tests/test_logger",
+            "program": "${workspaceFolder}/cmake-build-debug/tests/test_trog/test_trog",
             "args": ["4", "5"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}/cmake-build-debug",

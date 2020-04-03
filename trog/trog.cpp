@@ -3,18 +3,19 @@
 #include <sstream>
 #include <stdarg.h>
 #include <bitset>
-#include "rb_logger.hpp"
+#include <cstdint>
+#include <trog/trog.hpp>
 
-bool RBLogger::logger_enabled = true;
-RBLogger::LogLevelType RBLogger::Logger::allEnabled = 
-    RBLogger::LogLevelVerbose | RBLogger::LogLevelFDTrace | RBLogger::LogLevelTrace | RBLogger::LogLevelCTorTrace;
+bool Trog::logger_enabled = true;
+Trog::LogLevelType Trog::Trogger::allEnabled = 
+    Trog::LogLevelVerbose | Trog::LogLevelFDTrace | Trog::LogLevelTrace | Trog::LogLevelCTorTrace;
 
-RBLogger::LogLevelType RBLogger::Logger::globalThreshold = RBLogger::Logger::allEnabled; 
+Trog::LogLevelType Trog::Trogger::globalThreshold = Trog::Trogger::allEnabled; 
 
-RBLogger::Logger RBLogger::Logger::activeLogger{};
+Trog::Trogger Trog::Trogger::activeTrogger{};
 
 
-std::ostringstream& RBLogger::preamble(
+std::ostringstream& Trog::preamble(
     std::ostringstream& os,
     std::string filename,
     long pid,
@@ -45,59 +46,28 @@ std::ostringstream& RBLogger::preamble(
     return os;
 }
 
-void RBLogger::setEnabled(bool on_off)
+void Trog::setEnabled(bool on_off)
 {
     logger_enabled = on_off;
 }
-void RBLogger::enableForLevel(LogLevelType level)
+void Trog::enableForLevel(LogLevelType level)
 {
-    RBLogger::Logger::globalThreshold  = level;
+    Trog::Trogger::globalThreshold  = level;
     logger_enabled = true;
 }
 
-std::string RBLogger::Logger::p_className(std::string& func_name){
+std::string Trog::Trogger::p_className(std::string& func_name){
     
     return "";
 }
 
-RBLogger::Logger::Logger(std::ostream& os) : m_outStream(os)
+Trog::Trogger::Trogger(std::ostream& os) : m_outStream(os)
 {
-    RBLogger::logger_enabled = true;
+    Trog::logger_enabled = true;
 }
 
 
-std::string RBLogger::LogLevelText(RBLogger::LogLevelType level)
-{
-    static std::string tab[] = {
-        "",
-        "ERR",
-        "WRN",
-        "INF",
-        "DBG",
-        "VRB",
-    };
-    static std::string other_tab[] = {
-        "BAD1",
-        "TRC","TOR",
-        "BAD3","FD "
-    };
-    long adjusted_level;
-    long level_long = level;
-    if (level > 4) {
-        std::bitset<8> blevel(level);
-        adjusted_level = level >> 3;
-        std::bitset<8> badjusted_level(adjusted_level);
-        // std::cout << "LogLevelText level: " << blevel << " adjusted_level : " << badjusted_level << std::endl;
-        assert(adjusted_level < 6);
-        return tab[adjusted_level];
-    } else {
-        adjusted_level = (level & 0b00000111);
-        return other_tab[adjusted_level];
-    }
-    return tab[(int)level];
-}
-
-void RBLogger::Logger::logWithFormat(
+void Trog::Trogger::logWithFormat(
      LogLevelType           level,
      LogLevelType           threshold,
       const char*    file_name,
@@ -110,7 +80,7 @@ void RBLogger::Logger::logWithFormat(
     std::ostringstream os;
     if( levelIsActive(level, threshold) ){
         std::lock_guard<std::mutex> lg(_loggerMutex);
-        os << RBLogger::LogLevelText(level) << "|";
+        os << Trog::LogLevelText(level) << "|";
         path tmp2 = path(file_name);
         path filename_tmp3 = tmp2.filename();
         path tmp4 = filename_tmp3.stem();
@@ -145,7 +115,7 @@ void RBLogger::Logger::logWithFormat(
         write(STDERR_FILENO, (void*)outCharStar, len);
     }
 }
-void RBLogger::Logger::torTraceLog(
+void Trog::Trogger::torTraceLog(
     LogLevelType           level,
     LogLevelType           threshold,
     const char* file_name,
@@ -188,7 +158,7 @@ void RBLogger::Logger::torTraceLog(
         write(STDERR_FILENO, os.str().c_str(), strlen(os.str().c_str()) );
     }
 }
-void RBLogger::Logger::fdTraceLog(
+void Trog::Trogger::fdTraceLog(
     LogLevelType level,
     LogLevelType threshold,
     const char* file_name,
@@ -232,26 +202,87 @@ void RBLogger::Logger::fdTraceLog(
 }
 
 
-bool RBLogger::Logger::enabled()
+bool Trog::Trogger::enabled()
 {
     /// this function is only used for Trace functions
     /// we want these active with DEBUG levels
     LogLevelType lvl = LOG_LEVEL_DEBUG;
     LogLevelType tmp = globalThreshold;
-    return ( ((int)lvl <= (int)tmp) && RBLogger::logger_enabled );
+    return ( ((int)lvl <= (int)tmp) && Trog::logger_enabled );
 }
-bool testLevelForActive(long level, long threshold )
+
+std::string Trog::LogLevelText(Trog::LogLevelType level)
 {
-	long result;
-	long threshold_bits;
-	std::bitset<8> blevel(level);
-	std::bitset<8> bthreshold(threshold);
+    static std::string tab[] = {
+        "",
+        "ERR",
+        "WRN",
+        "INF",
+        "DBG",
+        "VRB",
+    };
+    static std::string other_tab[] = {
+        "BAD1",
+        "TRC","TOR",
+        "BAD3","FD "
+    };
+    const int bitWidth = 64;
+    const int64_t traceMax = 0b10000000;
+    const int64_t traceMask = 0b11111111;
+    int64_t adjusted_level;
+    int64_t level_long = level;
+
+    if (level > traceMax) {
+        // the level value is not a trace value
+        std::bitset<bitWidth> blevel(level);
+        adjusted_level = level >> Trog::TraceBits;
+        std::bitset<bitWidth> badjusted_level(adjusted_level);
+        // std::cout << "LogLevelText level: " << blevel << " adjusted_level : " << badjusted_level << std::endl;
+        assert(adjusted_level <= (Trog::LogLevelVerbose >> Trog::TraceBits));
+        return tab[adjusted_level];
+    } else {
+        adjusted_level = (level & traceMask);
+        switch(adjusted_level) {
+            case Trog::LogLevelCTorTrace:
+                return "TOR";
+                break;
+            case Trog::LogLevelFDTrace:
+                return "FD ";
+                break;
+            case Trog::LogLevelTrace:
+                return "TRC";
+                break;
+            case Trog::LogLevelTrace2:
+                return "TR2";
+                break;
+            case Trog::LogLevelTrace3:
+                return "TR3";
+                break;
+            case Trog::LogLevelTrace4:
+                return "TR4";
+                break;
+            default:
+                assert(false);
+        }
+    }
+}
+
+bool Trog::testLevelForActive(long level, long threshold )
+{
+
+    const int bitWidth = 32;
+    const int32_t traceMax = 0b10000000;
+    const int32_t traceMask = 0b11111111;
+	int32_t result;
+	int32_t threshold_bits;
+	std::bitset<bitWidth> blevel(level);
+	std::bitset<bitWidth> bthreshold(threshold);
 	// std::cout << "testLevels entry level: " << blevel << " threshold: " << bthreshold << std::endl;
-	if (level <= 4) {
-		threshold_bits = (threshold & 0x07);
-		std::bitset<8> bthreshold_bits(threshold);
+	if (level <= traceMax) {
+		threshold_bits = (threshold & traceMask);
+		std::bitset<bitWidth> bthreshold_bits(threshold);
 		result = (level & threshold_bits);
-		std::bitset<8> bresult(result);
+		std::bitset<bitWidth> bresult(result);
 		// std::cout << "testLevels level =< 4 threshold_bits: " << bthreshold_bits << " result: " << bresult << std::endl;
 		return result;
 	} else {
@@ -259,9 +290,9 @@ bool testLevelForActive(long level, long threshold )
 	}
 }
 
-bool RBLogger::Logger::levelIsActive(LogLevelType lvl, LogLevelType threshold)
+bool Trog::Trogger::levelIsActive(LogLevelType lvl, LogLevelType threshold)
 {
-    if (! RBLogger::logger_enabled)
+    if (! Trog::logger_enabled)
         return false;
     if (testLevelForActive(lvl, threshold)) {
         if (testLevelForActive(lvl, globalThreshold)) {
@@ -273,11 +304,11 @@ bool RBLogger::Logger::levelIsActive(LogLevelType lvl, LogLevelType threshold)
     return false;
     /// use the lowest threshold - local or global
     LogLevelType tmp = (threshold <= globalThreshold) ? threshold : globalThreshold;
-    return ( ((int)lvl <= (int)tmp) && RBLogger::logger_enabled );
-//    return ( ((int)lvl <= (int)threshold) && RBLogger::logger_enabled );
+    return ( ((int)lvl <= (int)tmp) && Trog::logger_enabled );
+//    return ( ((int)lvl <= (int)threshold) && Trog::logger_enabled );
 }
 
-void RBLogger::Logger::myprint(std::ostringstream& os)
+void Trog::Trogger::myprint(std::ostringstream& os)
 {
 //        write(STDERR_FILENO, "\n", 2);
     os << std::endl;
