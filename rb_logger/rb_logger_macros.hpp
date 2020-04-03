@@ -67,7 +67,6 @@
             /*var args*/    ##__VA_ARGS__\
         )
     #define RBLOGTRACE(lvl, arg1, ...) \
-        printf("NO_TRACE about to call functions"); \
         RBLogger::Logger::activeLogger.tracelog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
