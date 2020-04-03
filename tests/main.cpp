@@ -3,7 +3,7 @@
 
 #include <bitset>
 
-SET_LOGLEVEL(LOG_LEVEL_WARN)
+SET_LOGLEVEL(LOG_LEVEL_VERBOSE|LOG_LEVEL_FDTRACE|LOG_LEVEL_TORTRACE|LOG_LEVEL_TRACE)
 
 
 class ATestClass
@@ -110,6 +110,7 @@ void testLevelText()
 int main()
 {
 	RBLogger::setEnabled(true);
+	RBLogger::enableForLevel(LOG_LEVEL_FDTRACE|LOG_LEVEL_TRACE|LOG_LEVEL_WARN);
 
 	displayBitMask();
 	testLevelText();

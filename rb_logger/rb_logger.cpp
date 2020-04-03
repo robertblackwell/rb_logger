@@ -261,7 +261,16 @@ bool testLevelForActive(long level, long threshold )
 
 bool RBLogger::Logger::levelIsActive(LogLevelType lvl, LogLevelType threshold)
 {
-    return testLevelForActive(lvl, threshold);
+    if (! RBLogger::logger_enabled)
+        return false;
+    if (testLevelForActive(lvl, threshold)) {
+        if (testLevelForActive(lvl, globalThreshold)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return false;
     /// use the lowest threshold - local or global
     LogLevelType tmp = (threshold <= globalThreshold) ? threshold : globalThreshold;
     return ( ((int)lvl <= (int)tmp) && RBLogger::logger_enabled );
