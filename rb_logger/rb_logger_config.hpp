@@ -24,4 +24,5 @@
 #else
     #undef RBLOGGER_ENABLED
 #endif
+
 #endif // header guard

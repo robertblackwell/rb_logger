@@ -9,15 +9,15 @@
 #include "rb_logger_config.hpp"
 #include "rb_logger_class.hpp"
     
-#define LOG_LEVEL_ERROR     RBLogging::LogLevelError
-#define LOG_LEVEL_WARN      RBLogging::LogLevelWarn
-#define LOG_LEVEL_TRACE     RBLogging::LogLevelTrace
-#define LOG_LEVEL_TORTRACE  RBLogging::LogLevelTorTrace
-#define LOG_LEVEL_FDTRACE   RBLogging::LogLevelFDTrace
-#define LOG_LEVEL_INFO      RBLogging::LogLevelInfo
-#define LOG_LEVEL_DEBUG     RBLogging::LogLevelDebug
-#define LOG_LEVEL_VERBOSE   RBLogging::LogLevelVerbose
-#define LOG_LEVEL_MAX       RBLogging::LogLevelVerbose
+#define LOG_LEVEL_ERROR     RBLogger::LogLevelError
+#define LOG_LEVEL_WARN      RBLogger::LogLevelWarn
+#define LOG_LEVEL_TRACE     RBLogger::LogLevelTrace
+#define LOG_LEVEL_TORTRACE  RBLogger::LogLevelCTorTrace
+#define LOG_LEVEL_FDTRACE   RBLogger::LogLevelFDTrace
+#define LOG_LEVEL_INFO      RBLogger::LogLevelInfo
+#define LOG_LEVEL_DEBUG     RBLogger::LogLevelDebug
+#define LOG_LEVEL_VERBOSE   RBLogger::LogLevelVerbose
+#define LOG_LEVEL_MAX       RBLogger::LogLevelVerbose
 
 /// define the macro that sets loglevel for a file
 #if ! defined(RBLOGGER_ENABLED)
@@ -27,13 +27,13 @@
     #define SET_LOGLEVEL(level) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static RBLogging::LogLevelType rbLogLevel = level; \
+    static RBLogger::LogLevelType rbLogLevel = level; \
     _Pragma("clang diagnostic pop")
 
     #define RBLOGGER_SETLEVEL(level) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wunused-variable\"") \
-    static  RBLogging::LogLevelType rbLogLevel = level; \
+    static  RBLogger::LogLevelType rbLogLevel = level; \
     _Pragma("clang diagnostic pop")
 #endif
 
@@ -46,7 +46,7 @@
     #define RBLOGFDTRACE(lvl, arg_fd)
 #else
     #define ROBMACROFormatLog(lvl, frmt, ...) \
-        RBLogging::activeLogger.logWithFormat(\
+        RBLogger::Logger::activeLogger.logWithFormat(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -57,7 +57,7 @@
             )
 
     #define ROBMACROLog(lvl, arg1, ...) \
-        RBLogging::activeLogger.vlog(\
+        RBLogger::Logger::activeLogger.vlog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -68,7 +68,7 @@
         )
     #define RBLOGTRACE(lvl, arg1, ...) \
         printf("NO_TRACE about to call functions"); \
-        RBLogging::activeLogger.tracelog(\
+        RBLogger::Logger::activeLogger.tracelog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -78,7 +78,7 @@
             /*var args*/    ##__VA_ARGS__\
     )
     #define RBLOGTORTRACE(lvl, arg_this) \
-        RBLogging::activeLogger.torTraceLog(\
+        RBLogger::Logger::activeLogger.torTraceLog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \
@@ -87,7 +87,7 @@
             /*this*/        (void*)arg_this \
     )
     #define RBLOGFDTRACE(lvl, arg_fd) \
-        RBLogging::activeLogger.fdTraceLog(\
+        RBLogger::Logger::activeLogger.fdTraceLog(\
             /*log:*/        lvl, \
             /*threshold:*/  rbLogLevel, \
             /*file */       (char*)__FILE__, \

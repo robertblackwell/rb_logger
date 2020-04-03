@@ -1,8 +1,9 @@
 #include <boost/filesystem.hpp>
 #include <rb_logger/rb_logger.hpp>
+
 #include <bitset>
 
-SET_LOGLEVEL(LOG_LEVEL_MAX)
+SET_LOGLEVEL(LOG_LEVEL_WARN)
 
 
 class ATestClass
@@ -22,7 +23,7 @@ class ATestClass
 	}
 };
 
-// bool testLevels(RBLogging::LogLevel level, RBLogging::LogLevel threshold )
+// bool testLevels(RBLogger::LogLevel level, RBLogger::LogLevel threshold )
 bool testLevels(long level, long threshold )
 {
 	long result;
@@ -49,46 +50,46 @@ bool testLevels(long level, long threshold )
 
 void testBitMask()
 {
-	using namespace RBLogging;
+	using namespace RBLogger;
 
 	std::vector<long> log_level_values;
-	long xerror = static_cast<long>(RBLogging::LogLevel::error);
-	long xwarn = static_cast<long>(RBLogging::LogLevel::warn);
-	long xinfo = static_cast<long>(RBLogging::LogLevel::info);
-	long xdebug = static_cast<long>(RBLogging::LogLevel::debug);
-	long xverbose = static_cast<long>(RBLogging::LogLevel::verbose);
-	long xtotrace = static_cast<long>(RBLogging::LogLevel::tortrace);
-	long xtrace = static_cast<long>(RBLogging::LogLevel::trace);
-	long xfdtrace = static_cast<long>(RBLogging::LogLevel::fdtrace);
-	bool b1 = testLevels(LogLevel::verbose, LogLevel::verbose);
+	long xerror = static_cast<long>(RBLogger::LogLevelError);
+	long xwarn = static_cast<long>(RBLogger::LogLevelWarn);
+	long xinfo = static_cast<long>(RBLogger::LogLevelInfo);
+	long xdebug = static_cast<long>(RBLogger::LogLevelDebug);
+	long xverbose = static_cast<long>(RBLogger::LogLevelVerbose);
+	long xtotrace = static_cast<long>(RBLogger::LogLevelCTorTrace);
+	long xtrace = static_cast<long>(RBLogger::LogLevelTrace);
+	long xfdtrace = static_cast<long>(RBLogger::LogLevelFDTrace);
+	bool b1 = testLevels(LogLevelVerbose, LogLevelVerbose);
 	CHECK(b1);
-	bool b2 = testLevels(LogLevel::info, LogLevel::verbose);
+	bool b2 = testLevels(LogLevelInfo, LogLevelVerbose);
 	CHECK(b2);
-	bool b3 = testLevels(LogLevel::error, LogLevel::verbose);
+	bool b3 = testLevels(LogLevelError, LogLevelVerbose);
 	CHECK(b3);
 
-	bool b4 = testLevels(LogLevel::verbose, (LogLevel::verbose | LogLevel::tortrace));
+	bool b4 = testLevels(LogLevelVerbose, (LogLevelVerbose | LogLevelCTorTrace));
 	CHECK(b4);
-	bool b5 = testLevels(LogLevel::trace, (LogLevel::verbose | LogLevel::tortrace));
+	bool b5 = testLevels(LogLevelTrace, (LogLevelVerbose | LogLevelCTorTrace));
 	CHECK(!b5);
-	bool b6 = testLevels(LogLevel::fdtrace, (LogLevel::verbose | LogLevel::tortrace));
+	bool b6 = testLevels(LogLevelFDTrace, (LogLevelVerbose | LogLevelCTorTrace));
 	CHECK(!b6);
-	bool b7 = testLevels(LogLevel::tortrace, (LogLevel::verbose | LogLevel::tortrace));
+	bool b7 = testLevels(LogLevelCTorTrace, (LogLevelVerbose | LogLevelCTorTrace));
 	CHECK(b7);
 }
 
 void displayBitMask()
 {
-	using namespace RBLogging;
+	using namespace RBLogger;
 
-	std::bitset<8> berror(RBLogging::LogLevel::error); 	std::cout << "Error   : " << berror << std::endl;
-	std::bitset<8> bwarn(RBLogging::LogLevel::warn); 		std::cout << "Warn    : " << bwarn << std::endl;
-	std::bitset<8> binfo(RBLogging::LogLevel::info); 		std::cout << "Info    : " << binfo << std::endl;
-	std::bitset<8> bdebug(RBLogging::LogLevel::debug); 	std::cout << "Debug   : " << bdebug << std::endl;
-	std::bitset<8> bverbose(RBLogging::LogLevel::verbose); std::cout << "Verbose : " << bverbose << std::endl;
-	std::bitset<8> btotrace(RBLogging::LogLevel::tortrace);std::cout << "torTrace: " << btotrace << std::endl;
-	std::bitset<8> btrace(RBLogging::LogLevel::trace); 	std::cout << "Trace   : " << btrace << std::endl;
-	std::bitset<8> bfdtrace(RBLogging::LogLevel::fdtrace); std::cout << "FDTrace : " << bfdtrace << std::endl;
+	std::bitset<8> berror(RBLogger::LogLevelError); 	std::cout << "Error   : " << berror << std::endl;
+	std::bitset<8> bwarn(RBLogger::LogLevelWarn); 		std::cout << "Warn    : " << bwarn << std::endl;
+	std::bitset<8> binfo(RBLogger::LogLevelInfo); 		std::cout << "Info    : " << binfo << std::endl;
+	std::bitset<8> bdebug(RBLogger::LogLevelDebug); 	std::cout << "Debug   : " << bdebug << std::endl;
+	std::bitset<8> bverbose(RBLogger::LogLevelVerbose); std::cout << "Verbose : " << bverbose << std::endl;
+	std::bitset<8> btotrace(RBLogger::LogLevelCTorTrace);std::cout << "torTrace: " << btotrace << std::endl;
+	std::bitset<8> btrace(RBLogger::LogLevelTrace); 	std::cout << "Trace   : " << btrace << std::endl;
+	std::bitset<8> bfdtrace(RBLogger::LogLevelFDTrace); std::cout << "FDTrace : " << bfdtrace << std::endl;
 
 
 }
@@ -96,22 +97,20 @@ void displayBitMask()
 
 void testLevelText()
 {
-
-	std::cout << "Logger text " << RBLogging::LogLevelText(RBLogging::LogLevel::error) << std::endl;
-	std::cout << "Logger text " << RBLogging::LogLevelText(RBLogging::LogLevel::warn) << std::endl;
-	std::cout << "Logger text " << RBLogging::LogLevelText(RBLogging::LogLevel::info) << std::endl;
-	std::cout << "Logger text " << RBLogging::LogLevelText(RBLogging::LogLevel::debug) << std::endl;
-	std::cout << "Logger text " << RBLogging::LogLevelText(RBLogging::LogLevel::verbose) << std::endl;
-	std::cout << "Logger text expected TOR " << RBLogging::LogLevelText(RBLogging::LogLevel::tortrace) << std::endl;
-	std::cout << "Logger text expected TRC " << RBLogging::LogLevelText(RBLogging::LogLevel::trace) << std::endl;
-	std::cout << "Logger text exoected FD " << RBLogging::LogLevelText(RBLogging::LogLevel::fdtrace) << std::endl;
-
-
+	std::cout << "Logger text " << RBLogger::LogLevelText(RBLogger::LogLevelError) << std::endl;
+	std::cout << "Logger text " << RBLogger::LogLevelText(RBLogger::LogLevelWarn) << std::endl;
+	std::cout << "Logger text " << RBLogger::LogLevelText(RBLogger::LogLevelInfo) << std::endl;
+	std::cout << "Logger text " << RBLogger::LogLevelText(RBLogger::LogLevelDebug) << std::endl;
+	std::cout << "Logger text " << RBLogger::LogLevelText(RBLogger::LogLevelVerbose) << std::endl;
+	std::cout << "Logger text expected TOR " << RBLogger::LogLevelText(RBLogger::LogLevelCTorTrace) << std::endl;
+	std::cout << "Logger text expected TRC " << RBLogger::LogLevelText(RBLogger::LogLevelTrace) << std::endl;
+	std::cout << "Logger text exoected FD " << RBLogger::LogLevelText(RBLogger::LogLevelFDTrace) << std::endl;
 }
 
 int main()
 {
-	RBLogging::setEnabled(true);
+	RBLogger::setEnabled(true);
+
 	displayBitMask();
 	testLevelText();
 	LogError("This is an error");
