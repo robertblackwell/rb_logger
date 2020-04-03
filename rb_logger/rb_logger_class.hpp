@@ -1,5 +1,5 @@
-#ifndef RBLOGGER_HPP
-#define RBLOGGER_HPP
+#ifndef RBLOGGER_class_HPP
+#define RBLOGGER_class_HPP
 //
 #include <iostream>
 #include <sstream>
@@ -17,25 +17,9 @@ enum LogLevelType: long {
     LogLevelInfo =  3 << 3,
     LogLevelDebug = 4 << 3,
     LogLevelVerbose = 5 << 3,
+
 };
     
-#define LOG_LEVEL_ERROR     RBLogging::LogLevelError
-#define LOG_LEVEL_WARN      RBLogging::LogLevelWarn
-#define LOG_LEVEL_TRACE     RBLogging::LogLevelTrace
-#define LOG_LEVEL_TORTRACE  RBLogging::LogLevelTorTrace
-#define LOG_LEVEL_FDTRACE   RBLogging::LogLevelFDTrace
-#define LOG_LEVEL_INFO      RBLogging::LogLevelInfo
-#define LOG_LEVEL_DEBUG     RBLogging::LogLevelDebug
-#define LOG_LEVEL_VERBOSE   RBLogging::LogLevelVerbose
-#define LOG_LEVEL_MAX       RBLogging::LogLevelVerbose
-
-/// configure the layout of the logger output line
-#define RBLOG_USE_PREAMBLE
-#undef RBLOG_FILENAME
-#undef RBLOG_PIDTID
-#define RBLOG_FUNCTION_NAME 1
-#define RBLOG_LINE_NUMBER 1
-
 extern bool logger_enabled;
 extern LogLevelType globalThreshold;
 
@@ -115,6 +99,7 @@ void tracelog(
         preamble(os, tmp3.string(), pid, tid, func_name, line_number);
         myprint(os, firstArg, args...);
         write(STDERR_FILENO, os.str().c_str(), strlen(os.str().c_str()) );
+    }
 }
 void torTraceLog(
     LogLevelType level,
@@ -141,7 +126,6 @@ private:
     std::string p_className(std::string& func_name);
     bool enabled();
     bool levelIsActive(LogLevelType lvl, LogLevelType threshold);
-    bool p_fileStemIsActive(FilePathType stem);
     void myprint(std::ostringstream& os);
 
     template <typename T, typename... Types>
