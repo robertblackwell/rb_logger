@@ -8,12 +8,6 @@
 #include <pthread.h>
 #include <boost/filesystem.hpp>
 
-// class Trog::Trogger;    
-// extern bool logger_enabled;
-// extern LogLevelType globalThreshold;
-// extern Trogger activeTrogger;
-// }
-
 
 namespace Trog {
 
@@ -41,7 +35,9 @@ enum LogLevelTypeValues: int64_t {
 /** free functions */
 std::string LogLevelText(LogLevelType level);
 void setEnabled(bool on_off);
+
 void enableForLevel(LogLevelType level);
+
 
 std::ostringstream& preamble(
     std::ostringstream& os,
@@ -51,6 +47,7 @@ std::ostringstream& preamble(
     std::string function_name,
     long linenumber
 );
+
 bool testLevelForActive(long level, long threshold );
 
 class Trogger
@@ -103,21 +100,20 @@ void tracelog(
     const Types&... args)
 {
     std::ostringstream os;
-    boost::filesystem::path file_path = boost::filesystem::path(file_name);
-    auto tmp3 = file_path.filename();
-    auto tmp4 = tmp3.stem();
     if( levelIsActive(level, threshold) ){
         std::lock_guard<std::mutex> lg(_loggerMutex);
-        std::string s = LogLevelText(level);
+        // std::string s = LogLevelText(level);
         os << "TRC|";
-        auto pid = ::getpid();
-        auto tid = pthread_self();
-
-        preamble(os, tmp3.string(), pid, tid, func_name, line_number);
+        long pid = ::getpid();
+        long tid = pthread_self();
+        preamble(os, file_name, pid, tid, func_name, line_number);
         myprint(os, firstArg, args...);
-        write(STDERR_FILENO, os.str().c_str(), strlen(os.str().c_str()) );
+        // write(STDERR_FILENO, os.str().c_str(), strlen(os.str().c_str()) );
     }
 }
+
+
+
 void torTraceLog(
     LogLevelType level,
     LogLevelType threshold,
@@ -136,7 +132,7 @@ void fdTraceLog(
 
 bool levelIsActive(LogLevelType lvl, LogLevelType threshold);
 
-private:
+public:
     std::mutex _loggerMutex;
 
     std::ostream& m_outStream;

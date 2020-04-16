@@ -24,10 +24,10 @@ std::ostringstream& Trog::preamble(
     long linenumber
 ){
     os 
-        #ifdef RBLOG_FILENAME
+        #ifndef RBLOG_FILENAME
         << filename.c_str() 
         #endif
-        #ifdef RBLOG_PIDTID
+        #ifndef RBLOG_PIDTID
         << "[" 
         <<pid 
         << ":" 
@@ -112,7 +112,7 @@ void Trog::Trogger::logWithFormat(
         std::string outStr = os.str() + std::string(bufptr, strlen(bufptr));
         const char* outCharStar = outStr.c_str();
         size_t len = strlen(outCharStar);
-        write(STDERR_FILENO, (void*)outCharStar, len);
+        // write(STDERR_FILENO, (void*)outCharStar, len);
     }
 }
 void Trog::Trogger::torTraceLog(

@@ -8,6 +8,7 @@
 #include <boost/filesystem.hpp>
 #include <trog/trog_config.hpp>
 #include <trog/trog_class.hpp>
+#include <trog/trog_call_data.hpp>
 #include <trog/trog_macros.hpp>
 
 

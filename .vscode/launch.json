@@ -8,7 +8,8 @@
         "type":"pickString",
         "description": "Select the test to debug",
         "options": [
-            "test_logger"
+            "test_logger",
+            "test_speed"
         ],
         "default": "test_client_request"
     }],
