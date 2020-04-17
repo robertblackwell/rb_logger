@@ -8,6 +8,7 @@
         "type":"pickString",
         "description": "Select the test to debug",
         "options": [
+            "test_init",
             "test_logger",
             "test_speed"
         ],

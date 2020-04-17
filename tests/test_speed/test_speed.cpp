@@ -176,4 +176,5 @@ int main()
 	speed_test_traceLog();
 	speed_test_myprint();
 	speed_test_asprintf();
+	speed_test_collect();
 }

@@ -12,22 +12,6 @@
 
 namespace Trog {
 
-void format_types(std::ostringstream& os)
-{
-    os << std::endl;
-}
-
-std::ostringstream& preamble(
-    std::ostringstream& os,
-    std::string filename,
-    long pid,
-    long tid,
-    std::string function_name,
-    long linenumber
-);
-
-
-
 LogCallData::LogCallData(
 const char*         a_channel,
 const LogLevelType  a_level,
@@ -37,6 +21,12 @@ const char*         a_function_name,
 const long          a_tid,
 const long          a_pid
 
-): channel(a_channel), level(a_level), file_name(a_file_name), line_number(a_line_number), function_name(a_function_name), tid(a_tid), pid(a_pid)
+):  channel(a_channel), 
+    level(a_level), 
+    file_name(a_file_name), 
+    line_number(a_line_number), 
+    function_name(a_function_name), 
+    tid(a_tid), 
+    pid(a_pid)
 {}
 } //namespace

@@ -1,6 +1,6 @@
-set(TARGET test_speed)
+set(TARGET test_init)
 add_executable(${TARGET} 
-	test_speed.cpp
+	test_init.cpp
 	../../trog/trog.cpp
 	../../trog/trog.hpp
 	../../trog/trog_call_data.cpp
