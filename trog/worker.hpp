@@ -17,9 +17,13 @@ using WorkerSPtr = std::shared_ptr<Worker>;
 class Worker
 {
     public:
+
     Worker(FormatterSPtr formatter_sptr, SinkCollection& sinks): m_sinks(sinks)
     {
         m_formatter_sptr = formatter_sptr;
+        std::set_terminate([](){
+
+        });
         m_thread_object_uptr = std::make_unique<std::thread>([this]() 
         {
             this->loop();
@@ -27,8 +31,17 @@ class Worker
     }
     ~Worker()
     {
-        std::cout << "worker destructor" << std::endl;
+        std::cout << "worker destructor" << "queue size : " << m_logdata_queue.size() << std::endl;
     }
+    void submit(LogCallDataSPtr log_data_sptr)
+    {
+
+    }
+    void cleanup()
+    {
+        
+    }
+
     void addToQueue(LogCallDataSPtr log_data_sptr)
     {
         {
@@ -40,7 +53,7 @@ class Worker
     void loop()
     {
         for(;;) {
-            std::this_thread::sleep_for (std::chrono::seconds(5));
+            // std::this_thread::sleep_for (std::chrono::seconds(5));
             std::cout << "Worker loop Q size: " << m_logdata_queue.size()  << std::endl;
             #if 1
             LogCallDataSPtr ldata_sptr;

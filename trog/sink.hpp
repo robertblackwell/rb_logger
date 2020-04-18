@@ -72,7 +72,7 @@ public:
     }
     void write(std::string output)
     {
-        m_file << output << std::flush;
+        m_file << output << std::endl << std::flush;
     }
 
 private:

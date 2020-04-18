@@ -42,16 +42,16 @@ TEST_CASE("level text")
 	Trog::CollectorSPtr collector1 = Trog::Collector::make("default", worker_sptr, formatter);
 
 	for(;;) {
-		std::this_thread::sleep_for (std::chrono::seconds(2));
+		std::this_thread::sleep_for (std::chrono::seconds(1));
 
 		collector1->collect(
 			Trog::LogLevelDebug, 
 			Trog::LogLevelDebug,
 			"default",
 			__FILE__,
-			__PRETTY_FUNCTION__,
+			__FUNCTION__,
 			__LINE__,
-			s1,s1,s1
+			s1,s1
 
 		);
 	}

@@ -9,6 +9,8 @@
         "description": "Select the test to debug",
         "options": [
             "test_init",
+            "test_terminate",
+            "test_template",
             "test_logger",
             "test_speed"
         ],

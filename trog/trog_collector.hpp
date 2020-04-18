@@ -27,31 +27,15 @@ class Collector
 {
 public:
     static std::map<std::string, CollectorSPtr> s_collectors;
-    
-    static CollectorSPtr get(std::string name)
-    {
-        std::map<std::string, CollectorSPtr>::iterator x;
-        if ((x = s_collectors.find(name)) == s_collectors.end()) {
-            return nullptr;
-        } else {
-            return (*x).second;
-        }
-        return nullptr;
-    }
-
-    static CollectorSPtr make(std::string name, WorkerSPtr worker_sptr, FormatterSPtr formatter_sptr)
-    {
-        return std::make_shared<Collector>(name, worker_sptr, formatter_sptr);
-    }
+    static CollectorSPtr get(std::string name);
+    static CollectorSPtr make(std::string name, WorkerSPtr worker_sptr, FormatterSPtr formatter_sptr);
 
     Collector(
         std::string name, 
         WorkerSPtr worker_sptr,
         FormatterSPtr formatter_sptr
-    ): m_name(name), m_formatter_sptr(formatter_sptr), m_worker_sptr(worker_sptr)
-    {
-
-    }
+    );
+    
     template<typename T, typename... Types>
     void collect(
         LogLevelType level,

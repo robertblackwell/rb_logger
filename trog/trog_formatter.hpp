@@ -45,9 +45,11 @@ class Formatter: public FormatterInterface
         std::string function_name,
         long linenumber
     ){
+        boost::filesystem::path p(filename);
+        std::string s = p.filename().string();
         os 
-            #ifdef RBLOG_FILENAME
-            << filename.c_str() 
+            #ifndef RBLOG_FILENAME
+            << s  
             #endif
             #ifdef RBLOG_PIDTID
             << "[" 
