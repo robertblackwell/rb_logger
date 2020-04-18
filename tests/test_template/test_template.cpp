@@ -47,9 +47,7 @@ class MyClass
     template <typename T, typename... Types>
     void format_types (const T& firstArg)
     {
-		
-        doSomething(m_vector, firstArg);
-        // format_types(os);
+	    doSomething(m_vector, firstArg);
     }
 
     template <typename T, typename... Types>
@@ -60,15 +58,40 @@ class MyClass
     }
 };
 
+template <class U>
+class Y{
+public:
+    vector<U> v;
+    template <class T>
+    Y(T n) {
+        v.push_back(n);
+    }
+    template <class T, class... T2>
+    Y(T n, T2... rest) {
+        v.push_back(n);
+        Y(rest...);
+    }
+};
+
+template <class T>
+struct X
+{
+    std::vector<T> v;
+    X() = default; //Terminating recursion
+
+    template <class U, class... Ts>
+    X(U n, Ts... rest)  : X(rest...) { .. the recursive work ..}
+};
+
 
 int main()
 {
-
 	std::string s("this  is a string");
 	Opaque op1{1,1};
 	Opaque op2 {2,2};
 	MyClass m;
 	m.format_types(s, op1, op2);
+	Y<int> y{1,2,3,4,5};
+	X<int> x{1,2,3,4,5,6};
 	std::cout << "hello";
-
 }
