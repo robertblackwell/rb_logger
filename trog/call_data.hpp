@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include <trog/trog_class.hpp>
+#include <trog/loglevel.hpp>
 
 
 namespace Trog {
@@ -16,7 +16,7 @@ namespace Trog {
 struct LogCallData 
 {
     public:
-
+    std::function<void()> f;
     const char*         channel;
     const LogLevelType  level;
     const char*         file_name;

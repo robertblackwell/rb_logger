@@ -19,10 +19,10 @@ void ouch(int sig)
 //     sigaction(SIGINT, &act, 0);
 // }
 
-class Worker
+class Writer
 {
 	public:
-	Worker()
+	Writer()
 	{
 		std::cout << __PRETTY_FUNCTION__ << std::endl;
 	}
@@ -30,14 +30,14 @@ class Worker
 	{
 		std::cout << __PRETTY_FUNCTION__ << std::endl;
 	}
-	~Worker()
+	~Writer()
 	{
 		cleanup();
 		std::cout << __PRETTY_FUNCTION__ << std::endl;
 	}
 };
 
-std::shared_ptr<Worker> wsptr;
+std::shared_ptr<Writer> wsptr;
 void exit_handler()
 {
 	std::cout << __PRETTY_FUNCTION__ << std::endl;
@@ -60,7 +60,7 @@ void terminate_handler()
 
 int main()
 {
-	wsptr = std::make_shared<Worker>();
+	wsptr = std::make_shared<Writer>();
 	std::set_unexpected(unexpected_handler);
 	std::set_terminate(terminate_handler);
 	std::atexit(exit_handler);

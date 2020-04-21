@@ -18,13 +18,13 @@
     }],
     "configurations": [
         {
-            "name": "(gdb) Single test",
+            "name": "(gdb) Sample",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cmake-build-debug/tests/test_trog/test_trog",
+            "program": "${workspaceFolder}/cmake-build-debug/sample-app/sample",
             "args": ["4", "5"],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/cmake-build-debug",
+            "cwd": "${workspaceFolder}/cmake-build-debug/sample-app",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

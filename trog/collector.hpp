@@ -7,39 +7,44 @@
 #include <cstdint>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include <trog/trog_call_data.hpp>
-#include <trog/trog_formatter.hpp>
-#include <trog/trog_class.hpp>
-#include <trog/worker.hpp>
-
+#include <trog/call_data.hpp>
+#include <trog/formatter.hpp>
+#include <trog/writer_threaded.hpp>
+#include <trog/writer_simple.hpp>
+#include <trog/loglevel.hpp>
 
 namespace Trog {
 
-class Collector;
-
-using CollectorSPtr = std::shared_ptr<Collector>;
 
 /** a class the collects logging data at the site of a call toi the logger system.
  * there can be multiple of these objects.
  * Each one is distinguised by a 'name'
 */
-class Collector
+template<typename F, typename S, template<typename ...>class W>
+class Collector: W<F, S>
 {
 public:
-    static std::map<std::string, CollectorSPtr> s_collectors;
-    static CollectorSPtr get(std::string name);
-    static CollectorSPtr make(std::string name, WorkerSPtr worker_sptr, FormatterSPtr formatter_sptr);
 
-    Collector(
-        std::string name, 
-        WorkerSPtr worker_sptr,
-        FormatterSPtr formatter_sptr
-    );
+    static Collector& getInstance()
+    {
+        static Collector instance;
+        return instance;
+    }
+
+    Collector()
+    {
+        std::cout << "Collector destructor" << std::endl;
+    }
+    ~Collector()
+    {
+        std::cout << "Collector destructor" << std::endl;
+    }
     
     template<typename T, typename... Types>
     void collect(
         LogLevelType level,
-        LogLevelType threshold,
+        LogLevelType file_threshold,
+        LogLevelType global_threshold,
         const char* channel,
         const char* file_name,
         const char* func_name,
@@ -47,6 +52,9 @@ public:
         const T& firstArg,
         const Types&... args)
     {
+        if(!levelIsActive(level, file_threshold, global_threshold)) {
+            return;
+        }
         LogCallDataSPtr call_sptr = std::make_shared<LogCallData>(
             channel, 
             level, 
@@ -68,15 +76,17 @@ public:
         }
         #else
         std::ostringstream os;
-        m_formatter_sptr->format_types(os, firstArg, args...);
+        F::format_types(os, firstArg, args...);
         call_sptr->message_sptr = std::make_shared<std::string>(os.str());
-        m_worker_sptr->addToQueue(call_sptr);
+        W<F,S>::submit(call_sptr);
         #endif
     }
+    void wait()
+    {
+        W<F,S>::wait();
+    }
 private:
-    std::string     m_name;
-    FormatterSPtr   m_formatter_sptr;
-    WorkerSPtr      m_worker_sptr;
+
 }; //class   
 
 } // namespace

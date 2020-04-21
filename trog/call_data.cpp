@@ -1,5 +1,5 @@
 
-#include <trog/trog_call_data.hpp>
+#include <trog/call_data.hpp>
 
 //
 #include <iostream>
@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include <trog/trog_class.hpp>
 
 namespace Trog {
 
@@ -28,5 +27,8 @@ const long          a_pid
     function_name(a_function_name), 
     tid(a_tid), 
     pid(a_pid)
-{}
+{
+    f = nullptr;
+    // std::cout << "inside LogCallData CTOR" << std::endl;
+}
 } //namespace

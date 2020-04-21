@@ -7,8 +7,8 @@
 #include <cstdint>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include <trog/trog_class.hpp>
-
+#include <trog/call_data.hpp>
+#include <trog/loglevel.hpp>
 
 namespace Trog {
 
@@ -17,11 +17,18 @@ class FormatterInterface
     virtual std::string format(LogCallDataSPtr data_sptr) = 0;
 };
 
+class Formatter;
+using FormatterSPtr = std::shared_ptr<Formatter>;
+
+
 /** Object that formats the message part of a LogCallData object during collections
  * and formats the entire logger output record in the backend.*/
 class Formatter: public FormatterInterface
 {
     public:
+
+    static FormatterSPtr make();
+
     // void format_types(std::ostringstream& os);
     template <typename T, typename... Types>
     void format_types (std::ostringstream& os,  const T& firstArg)
@@ -39,6 +46,7 @@ class Formatter: public FormatterInterface
 
     void preamble(
         std::ostringstream& os,
+        LogLevelType level,
         std::string filename,
         long pid,
         long tid,
@@ -47,22 +55,24 @@ class Formatter: public FormatterInterface
     ){
         boost::filesystem::path p(filename);
         std::string s = p.filename().string();
+        std::string ls = LogLevelText(level);
         os 
+            << ls << "|"
             #ifndef RBLOG_FILENAME
             << s  
             #endif
-            #ifdef RBLOG_PIDTID
+            #ifndef RBLOG_PIDTID
             << "[" 
             <<pid 
             << ":" 
             << tid 
             <<"]" 
             #endif
-            #ifdef RBLOG_FUNCTION_NAME
+            #ifndef RBLOG_FUNCTION_NAME
             << "::"
             << function_name 
             #endif
-            #ifdef RBLOG_LINE_NUMBER
+            #ifndef RBLOG_LINE_NUMBER
             << "["<< linenumber <<"]"
             << ":" 
             #endif
@@ -79,6 +89,7 @@ class Formatter: public FormatterInterface
         std::ostringstream os;
         LogCallDataSPtr sp = log_data_sptr;
         preamble(os,
+            sp->level,
             sp->file_name,
             sp->pid,
             sp->tid,
@@ -89,6 +100,11 @@ class Formatter: public FormatterInterface
         return os.str();
     }
 };
-using FormatterSPtr = std::shared_ptr<Formatter>;
+
+inline FormatterSPtr Formatter::make()
+{
+    return std::make_shared<Formatter>();
+}
+
 } // namespace
 #endif

@@ -13,6 +13,24 @@ namespace Trog {
 
 extern bool logger_enabled;
 
+/**
+ * At runtime outputting of logging information is filtered by a mechanism that consists of
+ * both a bit mask and logging levels.
+ *
+ * Log calls are filtered as follows:
+ *
+ *  -   each log call has associated with it a value of LogLevelTypeValues, this is the calls "loglevel"
+ *      and as can be seen is a combination of an 8-bit filter mask and a log level number
+ *
+ *  -   each file or compilation unit has a static file global called the log_threshold which is also
+ *      a value of LogLevelTypeValue
+ *
+ *  -   if a log calls loglevel is all zeros in filter mask part of the loglevel value  filtering is done only by level
+ *      and any log call with a loglevel number > the log level number of the  files/compilation units level threshold will not be printed
+ *
+ *  -   if some mask bits are set in a log calls loglevel and thea files log threshold number is greater than LogLevelError
+ *      the log call is printed provided log_level_mask AND threshold_mask is none zero   
+ */
 typedef int32_t LogLevelType;
 /** The righthand 8 bits are a bit mask for Trace levels*/
 const int LevelBitWidth = 64;

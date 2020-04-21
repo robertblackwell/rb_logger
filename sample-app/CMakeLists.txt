@@ -1,11 +1,12 @@
-set(TARGET test_init)
+set(TARGET sample)
 add_executable(${TARGET} 
-	test_init.cpp
+	main.cpp
+	class_a.cpp 
+	class_b.cpp
 	../../trog/loglevel.cpp
 	../../trog/call_data.cpp
-	../../trog/setup.hpp
 )
-target_include_directories(${TARGET} PUBLIC SYSTEM ${TEST_INCLUDE_DIRS})
+target_include_directories(${TARGET} PUBLIC SYSTEM ./ ${TEST_INCLUDE_DIRS} )
 target_link_libraries(${TARGET} PUBLIC ${TEST_LINK_LIBS})
 add_test(${TARGET} ${TARGET})
 

@@ -4,11 +4,80 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <string>
 #include <pthread.h>
 #include <boost/filesystem.hpp>
-#include <trog/trog_config.hpp>
-#include <trog/trog_class.hpp>
+
+#include <trog/loglevel.hpp>
+#include <trog/call_data.hpp>
+#include <trog/sink.hpp>
+#include <trog/formatter.hpp>
+#include <trog/collector.hpp>
+#include <trog/writer_threaded.hpp>
+#include <trog/writer_simple.hpp>
+
+namespace Trog {
+    // using Trogger = Collector<Formatter, SinkDefault, Simple::Writer>;
+}
+
+/**
+ * should be called only in one file
+ * */
+
+#define TROG_SET_GLOBAL_LEVEL(global_level) \
+    Trog::LogLevelType TrogGlobalLevel = global_level; \
+
+///
+/// Should be callled in every compilation unit that uses logging
+///
+#define TROG_SET_FILE_LEVEL(file_level)                         \
+    static Trog::LogLevelType TrogFileLevel = file_level;        \
+    extern Trog::LogLevelType TrogGlobalLevel;                  \
     
+
+#define TROG_COLLECT(level, ...) \
+    Trog::Trogger::getInstance().collect(   \
+        level, \
+        TrogFileLevel, \
+        TrogGlobalLevel, \
+        "justafiller", \
+        __FILE__, \
+        __func__, \
+        __LINE__, \
+        ##__VA_ARGS__ \
+    );
+
+inline std::string ptoa(void* p)
+{
+    char* pbuf;
+    asprintf(&pbuf, "%p", p);;
+    std::string s(pbuf);
+    free(pbuf);
+    return s;
+}
+
+#define TROG_ERROR(...)     TROG_COLLECT(Trog::LogLevelError, ##__VA_ARGS__)
+#define TROG_WARN(...)      TROG_COLLECT(Trog::LogLevelWarn, ##__VA_ARGS__)
+#define TROG_INFO(...)      TROG_COLLECT(Trog::LogLevelInfo, ##__VA_ARGS__)
+#define TROG_DEBUG(...)     TROG_COLLECT(Trog::LogLevelDebug, ##__VA_ARGS__)
+#define TROG_VERBOSE(...)   TROG_COLLECT(Trog::LogLevelVerbose, ##__VA_ARGS__)
+
+#define TROG_TRACE3(...)     TROG_COLLECT(Trog::LogLevelTrace3, ##__VA_ARGS__)
+#define TROG_TRACE4(...)     TROG_COLLECT(Trog::LogLevelTrace4, ##__VA_ARGS__)
+#define TROG_TRACE5(...)     TROG_COLLECT(Trog::LogLevelTrace5, ##__VA_ARGS__)
+#define TROG_TRACE6(...)     TROG_COLLECT(Trog::LogLevelTrace6, ##__VA_ARGS__)
+#define TROG_TRACE7(...)     TROG_COLLECT(Trog::LogLevelTrace7, ##__VA_ARGS__)
+#define TROG_TRACE8(...)     TROG_COLLECT(Trog::LogLevelTrace8, ##__VA_ARGS__)
+
+#define TROG_TRACE_FD(arg_fd)  TROG_COLLECT(Trog::LogLevelTrace8, "FD:", arg_fd)
+#define TROG_TRACE_CTOR()  \
+    do { \
+        std::string tmp = ptoa((void*)this); \
+        TROG_COLLECT(Trog::LogLevelCTorTrace, "this:", tmp); \
+    } while(0);
+
+#if 0
+
 #define LOG_LEVEL_ERROR     Trog::LogLevelError
 #define LOG_LEVEL_WARN      Trog::LogLevelWarn
 #define LOG_LEVEL_TRACE     Trog::LogLevelTrace
@@ -18,6 +87,7 @@
 #define LOG_LEVEL_DEBUG     Trog::LogLevelDebug
 #define LOG_LEVEL_VERBOSE   Trog::LogLevelVerbose
 #define LOG_LEVEL_MAX       Trog::LogLevelVerbose
+
 
 /// define the macro that sets loglevel for a file
 #if ! defined(Trog_ENABLED)
@@ -135,5 +205,5 @@
 #define  LOGTORTRACE(...)       RBLOGTORTRACE(LOG_LEVEL_TORTRACE, this)
 #define  LOGFDTRACE(fd)         RBLOGFDTRACE(LOG_LEVEL_FDTRACE, fd)
 
-
+#endif
 #endif

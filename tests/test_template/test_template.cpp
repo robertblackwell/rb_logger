@@ -7,7 +7,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <string>
+// #include <trog/collector.hpp>
+// #include <trog/sink.hpp>
+// #include <trog/writer.hpp>
 
+#if 0
 struct Opaque {
 	int v1;
 	int v2;
@@ -57,41 +62,70 @@ class MyClass
         format_types(args...);
     }
 };
-
-template <class U>
-class Y{
-public:
-    vector<U> v;
-    template <class T>
-    Y(T n) {
-        v.push_back(n);
-    }
-    template <class T, class... T2>
-    Y(T n, T2... rest) {
-        v.push_back(n);
-        Y(rest...);
-    }
-};
-
-template <class T>
-struct X
+namespace Trog {
+template<class W>
+class Dummy
 {
-    std::vector<T> v;
-    X() = default; //Terminating recursion
-
-    template <class U, class... Ts>
-    X(U n, Ts... rest)  : X(rest...) { .. the recursive work ..}
+public:
+	WriterInterfaceSPtr 			m_worker_sptr;
+	FormatterSPtr					m_formatter_sptr;
+	SinkInterfaceSPtr				m_sink_sptr;
+	Dummy();
 };
+template<class W>
+Dummy<W>::Dummy()
+{
+	// m_worker_sptr = std::make_shared<W>(m_formatter_sptr, m_sinks);
+	m_worker_sptr = W::make(m_formatter_sptr, m_sinks);
+}
 
+typedef Dummy<Trog::Thread::Writer> ThreadDummy;
+}
 
 int main()
 {
+	Trog::ThreadDummy d{};
 	std::string s("this  is a string");
 	Opaque op1{1,1};
 	Opaque op2 {2,2};
 	MyClass m;
-	m.format_types(s, op1, op2);
-	Y<int> y{1,2,3,4,5};
-	X<int> x{1,2,3,4,5,6};
 	std::cout << "hello";
+}
+#endif
+#include "mytemplate.hpp"
+#include "myclass.hpp"
+typedef DemoT<MyClass> MyInstantiatedDemoClass;
+
+
+template<typename A, typename B> struct C: public A, public B
+{
+	void test(){std::cout << "Class C " <<  A::me() << B::me() << std::endl;}
+};
+
+template<typename A, typename B, template<typename ...> class C>
+struct D: public C<A, B>
+{
+
+	void test(){
+		std::cout << "Class C " <<  A::m1me() << B::m2me() << std::endl;
+	}
+};
+
+struct M1{
+	std::string m1me(){ return std::string("This is M1::m1");}
+};
+struct M2{
+	std::string m2me(){ return std::string("This is M2::m2");}
+};
+
+
+
+int main()
+{
+	D< M1, M2, C> xx;
+	xx.test();
+	DemoT<MyClass> x;
+	x.test();
+	MyInstantiatedDemoClass y;
+	y.test();
 }

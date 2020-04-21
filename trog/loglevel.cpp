@@ -2,39 +2,13 @@
 #include <iostream>
 #include <sstream>
 #include <stdarg.h>
+#include <assert.h>
 #include <bitset>
 #include <cstdint>
-#include <trog/trog.hpp>
+#include <trog/loglevel.hpp>
 
-bool Trog::logger_enabled = true;
-Trog::LogLevelType Trog::Trogger::allEnabled = 
-    Trog::LogLevelVerbose | Trog::LogLevelFDTrace | Trog::LogLevelTrace | Trog::LogLevelCTorTrace;
-
-Trog::LogLevelType Trog::Trogger::globalThreshold = Trog::Trogger::allEnabled; 
-
-Trog::Trogger Trog::Trogger::activeTrogger{};
-
-
-void Trog::setEnabled(bool on_off)
-{
-    logger_enabled = on_off;
-}
-void Trog::enableForLevel(LogLevelType level)
-{
-    Trog::Trogger::globalThreshold  = level;
-    logger_enabled = true;
-}
-
-bool Trog::Trogger::enabled()
-{
-    /// this function is only used for Trace functions
-    /// we want these active with DEBUG levels
-    LogLevelType lvl = LOG_LEVEL_DEBUG;
-    LogLevelType tmp = globalThreshold;
-    return ( ((int)lvl <= (int)tmp) && Trog::logger_enabled );
-}
-
-std::string Trog::LogLevelText(Trog::LogLevelType level)
+namespace Trog{
+std::string LogLevelText(Trog::LogLevelType level)
 {
     static std::string tab[] = {
         "",
@@ -72,17 +46,23 @@ std::string Trog::LogLevelText(Trog::LogLevelType level)
             case Trog::LogLevelFDTrace:
                 return "FD ";
                 break;
-            case Trog::LogLevelTrace:
-                return "TRC";
-                break;
-            case Trog::LogLevelTrace2:
-                return "TR2";
-                break;
             case Trog::LogLevelTrace3:
-                return "TR3";
+                return "TRC3";
                 break;
             case Trog::LogLevelTrace4:
-                return "TR4";
+                return "TRC4";
+                break;
+            case Trog::LogLevelTrace5:
+                return "TRC5";
+                break;
+            case Trog::LogLevelTrace6:
+                return "TRC6";
+                break;
+            case Trog::LogLevelTrace7:
+                return "TRC7";
+                break;
+            case Trog::LogLevelTrace8:
+                return "TRC8";
                 break;
             default:
                 assert(false);
@@ -90,9 +70,8 @@ std::string Trog::LogLevelText(Trog::LogLevelType level)
     }
 }
 
-bool Trog::testLevelForActive(long level, long threshold )
+bool testLevelIsActive(LogLevelType level, LogLevelType threshold )
 {
-
     const int bitWidth = 32;
     const int32_t traceMax = 0b10000000;
     const int32_t traceMask = 0b11111111;
@@ -113,20 +92,16 @@ bool Trog::testLevelForActive(long level, long threshold )
 	}
 }
 
-bool Trog::levelIsActive(LogLevelType lvl, LogLevelType threshold)
+bool levelIsActive(LogLevelType level, LogLevelType file_threshold, LogLevelType global_threshold)
 {
-    if (! Trog::logger_enabled)
-        return false;
-    if (testLevelForActive(lvl, threshold)) {
-        if (testLevelForActive(lvl, globalThreshold)) {
+
+    if (testLevelIsActive(level, file_threshold)) {
+        if (testLevelIsActive(level, global_threshold)) {
             return true;
         } else {
             return false;
         }
     }
     return false;
-    /// use the lowest threshold - local or global
-    LogLevelType tmp = (threshold <= globalThreshold) ? threshold : globalThreshold;
-    return ( ((int)lvl <= (int)tmp) && Trog::logger_enabled );
-//    return ( ((int)lvl <= (int)threshold) && Trog::logger_enabled );
 }
+} // namespace
