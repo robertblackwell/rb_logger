@@ -23,7 +23,7 @@ set(CTEST_CUSTOM_PRE_TEST "echo THIS IS PRE TEST")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(TEST_LINK_LIBS 
+set(TROG_LINK_LIBS 
 	Threads::Threads 
 	${VENDOR_DIR}/lib/libboost_filesystem.a 
 	)
@@ -31,15 +31,15 @@ set(TEST_LINK_LIBS
 include(CTest) 
 enable_testing()
 	
-set(TEST_INCLUDE_DIRS 
-	SYSTEM ${PROJECT_DIR} ${VENDOR_DIR}/include)
+set(TROG_INCLUDE_DIRS 
+	SYSTEM ${PROJECT_DIR}/include ${VENDOR_DIR}/include)
 # find_program(iwyu_path NAMES include-what-you-use iwyu)
 # if(NOT iwyu_path)
 #   message(FATAL_ERROR "Could not find the program include-what-you-use")
 # endif()
 
-message("TEST_INCLUDE_DIRS ${TEST_INCLUDE_DIRS}")
-message("TEST_LINK_DIRS ${TEST_LINK_DIRS}")
+message("TROG_INCLUDE_DIRS ${TROG_INCLUDE_DIRS}")
+message("TROG_LINK_DIRS ${TROG_LINK_DIRS}")
 # Optionally set things like CMAKE_CXX_STANDARD, CMAKE_POSITION_INDEPENDENT_CODE here
 # Let's ensure -std=c++xx instead of -std=g++xx
 set(CMAKE_CXX_STANDARD 17)
@@ -47,5 +47,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(tests)
-# add_subdirectory(sample-app)
+add_subdirectory(sample-app)
+add_subdirectory(performance)
 

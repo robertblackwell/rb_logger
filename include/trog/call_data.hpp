@@ -35,7 +35,17 @@ struct LogCallData
     const long          a_tid,
     const long          a_pid
 
-    );
+    ):  channel(a_channel), 
+    level(a_level), 
+    file_name(a_file_name), 
+    line_number(a_line_number), 
+    function_name(a_function_name), 
+    tid(a_tid), 
+    pid(a_pid)
+{
+    f = nullptr;
+    // std::cout << "inside LogCallData CTOR" << std::endl;
+}
 };
 
 
