@@ -5,8 +5,12 @@
 #include <boost/filesystem.hpp>
 #include <trog/trog.hpp>
 
+namespace Trog {
+using Trogger = Collector<Formatter, SinkDefault, Simple::Writer>;
+}
 
-SET_LOGLEVEL(LOG_LEVEL_VERBOSE|LOG_LEVEL_FDTRACE|LOG_LEVEL_TORTRACE|LOG_LEVEL_TRACE)
+TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
+TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
 
 
 TEST_CASE("level text")
@@ -36,26 +40,35 @@ TEST_CASE("level text")
 	tmp = Trog::LogLevelText(Trog::LogLevelFDTrace);
 	CHECK( (std::string("FD ") == tmp));
 
-	int64_t x3 = Trog::LogLevelTrace;
-	tmp = Trog::LogLevelText(Trog::LogLevelTrace);
-	CHECK( (std::string("TRC") == tmp));
+	int64_t x3 = Trog::LogLevelTrace3;
+	tmp = Trog::LogLevelText(Trog::LogLevelTrace3);
+	CHECK( (std::string("TRC3") == tmp));
 
 	int64_t x4 = Trog::LogLevelTrace3;
 
 	int64_t x5 = Trog::LogLevelTrace4;
 	tmp = Trog::LogLevelText(Trog::LogLevelTrace4);
-	CHECK( (std::string("TR4") == tmp));
+	CHECK( (std::string("TRC4") == tmp));
 }
 TEST_CASE("testLevelForActive")
 {
 	bool tmp;
-	tmp = Trog::testLevelForActive(Trog::LogLevelDebug, Trog::LogLevelInfo);
-	tmp = Trog::testLevelForActive(Trog::LogLevelDebug, Trog::LogLevelWarn);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelDebug, Trog::LogLevelVerbose);
+	CHECK(tmp);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelDebug, Trog::LogLevelWarn);
+	CHECK(!tmp);
 
-	tmp = Trog::testLevelForActive(Trog::LogLevelDebug, Trog::LogLevelInfo|Trog::LogLevelTrace);
-	tmp = Trog::testLevelForActive(Trog::LogLevelDebug, Trog::LogLevelWarn|Trog::LogLevelTrace);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelDebug, Trog::LogLevelVerbose|Trog::LogLevelTrace3);
+	CHECK(tmp);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelDebug, Trog::LogLevelWarn|Trog::LogLevelTrace3);
+	CHECK(!tmp);
 
-	tmp = Trog::testLevelForActive(Trog::LogLevelTrace, Trog::LogLevelInfo|Trog::LogLevelTrace);
-	tmp = Trog::testLevelForActive(Trog::LogLevelCTorTrace, Trog::LogLevelInfo|Trog::LogLevelTrace);
-	tmp = Trog::testLevelForActive(Trog::LogLevelFDTrace, Trog::LogLevelInfo|Trog::LogLevelTrace);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelTrace3, Trog::LogLevelInfo|Trog::LogLevelTrace3);
+	CHECK(tmp);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelCTorTrace, Trog::LogLevelInfo|Trog::LogLevelTrace3);
+	CHECK(!tmp);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelFDTrace, Trog::LogLevelInfo|Trog::LogLevelTrace3);
+	CHECK(!tmp);
+	tmp = Trog::testLevelIsActive(Trog::LogLevelTrace3, Trog::LogLevelError|Trog::LogLevelTrace3);
+	CHECK(!tmp);
 }

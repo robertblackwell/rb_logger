@@ -1,0 +1,2 @@
+add_subdirectory(terminate)
+add_subdirectory(template)

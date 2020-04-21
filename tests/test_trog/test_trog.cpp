@@ -4,8 +4,12 @@
 #include <boost/filesystem.hpp>
 #include <trog/trog.hpp>
 
+namespace Trog {
+using Trogger = Collector<Formatter, SinkDefault, Simple::Writer>;
+}
 
-SET_LOGLEVEL(LOG_LEVEL_VERBOSE|LOG_LEVEL_FDTRACE|LOG_LEVEL_TORTRACE|LOG_LEVEL_TRACE)
+TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
+TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
 
 
 class ATestClass
@@ -13,15 +17,15 @@ class ATestClass
 	public:
 	ATestClass()
 	{
-		LogTorTrace();
-	}
+		TROG_TRACE_CTOR();
+	}		
 	void doSomething()
 	{
-		LogTrace("Inside doSomething");
+		TROG_DEBUG("Inside doSomething");
 	}
 	~ATestClass()
 	{
-		LogTorTrace();
+		TROG_TRACE_CTOR();
 	}
 };
 
@@ -61,7 +65,7 @@ void testBitMask()
 	long xdebug = static_cast<long>(Trog::LogLevelDebug);
 	long xverbose = static_cast<long>(Trog::LogLevelVerbose);
 	long xtotrace = static_cast<long>(Trog::LogLevelCTorTrace);
-	long xtrace = static_cast<long>(Trog::LogLevelTrace);
+	long xtrace4 = static_cast<long>(Trog::LogLevelTrace4);
 	long xfdtrace = static_cast<long>(Trog::LogLevelFDTrace);
 	bool b1 = testLevels(LogLevelVerbose, LogLevelVerbose);
 	TCHECK(b1);
@@ -72,7 +76,7 @@ void testBitMask()
 
 	bool b4 = testLevels(LogLevelVerbose, (LogLevelVerbose | LogLevelCTorTrace));
 	TCHECK(b4);
-	bool b5 = testLevels(LogLevelTrace, (LogLevelVerbose | LogLevelCTorTrace));
+	bool b5 = testLevels(LogLevelTrace4, (LogLevelVerbose | LogLevelCTorTrace));
 	TCHECK(!b5);
 	bool b6 = testLevels(LogLevelFDTrace, (LogLevelVerbose | LogLevelCTorTrace));
 	TCHECK(!b6);
@@ -90,7 +94,7 @@ void displayBitMask()
 	std::bitset<8> bdebug(Trog::LogLevelDebug); 	std::cout << "Debug   : " << bdebug << std::endl;
 	std::bitset<8> bverbose(Trog::LogLevelVerbose); std::cout << "Verbose : " << bverbose << std::endl;
 	std::bitset<8> btotrace(Trog::LogLevelCTorTrace);std::cout << "torTrace: " << btotrace << std::endl;
-	std::bitset<8> btrace(Trog::LogLevelTrace); 	std::cout << "Trace   : " << btrace << std::endl;
+	std::bitset<8> btrace(Trog::LogLevelTrace4); 	std::cout << "Trace   : " << btrace << std::endl;
 	std::bitset<8> bfdtrace(Trog::LogLevelFDTrace); std::cout << "FDTrace : " << bfdtrace << std::endl;
 
 
@@ -105,7 +109,7 @@ void testLevelText()
 	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelDebug) << std::endl;
 	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelVerbose) << std::endl;
 	std::cout << "Trogger text expected TOR " << Trog::LogLevelText(Trog::LogLevelCTorTrace) << std::endl;
-	std::cout << "Trogger text expected TRC " << Trog::LogLevelText(Trog::LogLevelTrace) << std::endl;
+	std::cout << "Trogger text expected TRC " << Trog::LogLevelText(Trog::LogLevelTrace4) << std::endl;
 	std::cout << "Trogger text exoected FD " << Trog::LogLevelText(Trog::LogLevelFDTrace) << std::endl;
 }
 TEST_CASE("level text")
@@ -132,29 +136,27 @@ TEST_CASE("level text")
 	tmp = Trog::LogLevelText(Trog::LogLevelFDTrace);
 	CHECK( (std::string("FD ") == tmp));
 
-	tmp = Trog::LogLevelText(Trog::LogLevelTrace);
+	tmp = Trog::LogLevelText(Trog::LogLevelTrace7);
 	CHECK( (std::string("TRC") == tmp));
 
 }
 int notmain()
 {
-	Trog::setEnabled(true);
-	Trog::enableForLevel(LOG_LEVEL_FDTRACE|LOG_LEVEL_TRACE|LOG_LEVEL_WARN);
 
 	displayBitMask();
 	testLevelText();
-	LogError("This is an error");
-	LogWarn("This is an warning");
-	LogInfo("This is info");
-	LogDebug("This is debug", "and this is some more", 42);
-	LogVerbose("This is verbose");
+	TROG_ERROR("This is an error");
+	TROG_WARN("This is an warning");
+	TROG_INFO("This is info");
+	TROG_DEBUG("This is debug", "and this is some more", 42);
+	TROG_VERBOSE("This is verbose");
 	ATestClass* aptr = new ATestClass();
 	aptr->doSomething();
 	ATestClass* bptr = new ATestClass();
 	delete aptr;
 	delete bptr;
-	LogFDTrace(33);
-	LogTrace("This is just a trace");
-	LogError("This is an error");
+	TROG_TRACE_FD(33);
+	TROG_TRACE3("This is just a trace");
+	TROG_ERROR("This is an error");
 	testBitMask();
 }

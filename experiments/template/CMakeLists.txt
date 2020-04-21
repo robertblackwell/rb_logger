@@ -1,13 +1,14 @@
-set(TARGET test_trog)
+set(TARGET template)
 add_executable(${TARGET} 
-	test_trog_2.cpp
+	template_main.cpp
+	myclass.cpp
+	mytemplate.impl.cpp
 )
-
 target_include_directories(${TARGET} 
 	PUBLIC SYSTEM 
-	./ 
-	${TROG_VENDOR_INCLUDE_DIR} 
+	./ ${TROG_VENDOR_INCLUDE_DIR}
 )
+
 
 target_link_libraries(${TARGET} PUBLIC
 	trog::trog
@@ -15,4 +16,6 @@ target_link_libraries(${TARGET} PUBLIC
 	${TROG_VENDOR_LIB_DIR}/libboost_filesystem.a
 )
 
-add_test(${TARGET} ${TARGET})
+
+# add_test(${TARGET} ${TARGET})
+

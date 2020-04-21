@@ -6,7 +6,7 @@
 #include <set>
 #include <bitset>
 #include <cstdint>
-
+#include <assert.h>
 
 namespace Trog {
 
@@ -137,7 +137,7 @@ inline std::string LogLevelText(Trog::LogLevelType level)
 inline bool testLevelIsActive(LogLevelType level, LogLevelType threshold )
 {
     const int bitWidth = 32;
-    const int32_t traceMax = 0b10000000;
+    const int32_t traceMax =  0b10000000;
     const int32_t traceMask = 0b11111111;
 	int32_t result;
 	int32_t threshold_bits;
@@ -145,6 +145,11 @@ inline bool testLevelIsActive(LogLevelType level, LogLevelType threshold )
 	std::bitset<bitWidth> bthreshold(threshold);
 	// std::cout << "testLevels entry level: " << blevel << " threshold: " << bthreshold << std::endl;
 	if (level <= traceMax) {
+        // then level is only one of the trace levels
+        if ((threshold >= LogLevelError) && (threshold < LogLevelWarn)) {
+            // the level is Error maybe plus some trace stuff
+            return false;
+        }
 		threshold_bits = (threshold & traceMask);
 		std::bitset<bitWidth> bthreshold_bits(threshold);
 		result = (level & threshold_bits);

@@ -3,22 +3,40 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "inputs":[{
-        "id":"selectTest",
-        "type":"pickString",
-        "description": "Select the test to debug",
-        "options": [
-            "test_init",
-            "test_terminate",
-            "test_template",
-            "test_logger",
-            "test_speed"
-        ],
-        "default": "test_client_request"
-    }],
+    "inputs":[
+        {
+            "id":"selectSpeed",
+            "type":"pickString",
+            "description": "Select speed bench to run",
+            "options": [
+                "dedicated_thread_speed",
+                "user_thread_speed"
+            ],
+            "default": "test_client_request"
+        },
+        {
+            "id":"selectExperiment",
+            "type":"pickString",
+            "description": "Select experiment to run",
+            "options": [
+                "dedicated_thread_speed",
+                "user_thread_speed"
+            ],
+            "default": "test_client_request"
+        },
+        {
+            "id":"selectTest",
+            "type":"pickString",
+            "description": "Select the test to debug",
+            "options": [
+                "test_trog"
+            ],
+            "default": "test_client_request"
+        }
+    ],
     "configurations": [
         {
-            "name": "(gdb) Sample",
+            "name": "(gdb) Sample application",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/cmake-build-debug/sample-app/sample",
@@ -37,13 +55,13 @@
             ]
         },
         {
-            "name": "Test Debug Launch",
+            "name": "(gdb) Speed",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cmake-build-debug/tests/${input:selectTest}/${input:selectTest}",
-            "args": [],
+            "program": "${workspaceFolder}/cmake-build-debug/performance/${input:selectSpeed}",
+            "args": ["4", "5"],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/cmake-build-debug/tests/${input:selectTest}",
+            "cwd": "${workspaceFolder}/cmake-build-debug/performance",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -51,18 +69,37 @@
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
+                    "ignoreFailures": true,
                 }
             ]
         },
         {
-            "name": "Debug full path",
+            "name": "(gdb) Experiments",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/cmake-build-debug/tests/${input:selectTest}",
+            "program": "${workspaceFolder}/cmake-build-debug/experiments/{input:selectExperiment}/{input:selectExperiment}",
+            "args": ["4", "5"],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/cmake-build-debug/experiments/{input:selectExperiment}/{input:selectExperiment}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true,
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Test Debug Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/cmake-build-debug/tests/${input:selectTest}/${input:selectTest}",
             "args": [],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}/cmake-build-debug/tests",
+            "cwd": "${workspaceFolder}/cmake-build-debug/tests/${input:selectTest}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

@@ -24,6 +24,7 @@ option(TROG_BuildTests "Build the unit tests when BUILD_TESTING is enabled." ON)
 option(TROG_Install "Install CMake targets during install step." ON)
 option(TROG_Package "trog does not yet being installed as a cmake package" OFF)
 option(TROG_Verbose "Print trog related variables" ON)
+option(TROG_DEBUG_BUILD "The build is type debug" ON)
 ##
 ## CONFIGURATION
 ##
@@ -50,6 +51,11 @@ message(STATUS "3rd Party dependencies HEADERS are in ${TROG_VENDOR_INCLUDE_DIR}
 
 set(TROG_VENDOR_LIB_DIR "${TROG_VENDOR_DIR}/lib")
 message(STATUS "3rd Party dependencies LIBs are in ${TROG_VENDOR_LIB_DIR}")
+
+if (TROG_DEBUG_BUILD)
+    message("Setting build type to Debug")
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 if (TROG_Verbose)
     message("==============================================================================================")
@@ -127,6 +133,7 @@ if(BUILD_TESTING AND TROG_BuildTests)
 
     enable_testing()
     add_subdirectory(tests)
+    add_subdirectory(experiments)
     add_subdirectory(performance)
     add_subdirectory(sample-app)
 endif()

@@ -11,5 +11,4 @@ target_link_libraries(${TARGET} PUBLIC
 	Threads::Threads
 	${TROG_VENDOR_LIB_DIR}/libboost_filesystem.a
 )
-add_test(${TARGET} ${TARGET})
 
