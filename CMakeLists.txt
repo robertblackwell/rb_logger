@@ -1,52 +1,185 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.1)
 
-project(rb_logger
-    VERSION 0.1
-    DESCRIPTION "A logging library"
-    LANGUAGES CXX)
+##
+## PROJECT
+## name and version
+##
+project(trog VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(PROJECT_DIR ${rb_logger_SOURCE_DIR})
-set(VENDOR_DIR ${PROJECT_DIR}/vendor)
-
-message("rb_logger Dir: ${rb_logger_SOURCE_DIR}")
-message("Project Dir: ${PROJECT_DIR}")
-message("Vendor Dir: ${VENDOR_DIR}")
-
-# this is a fix for a problem with boost libraries see https://github.com/Microsoft/vcpkg/issues/4497
-# also a hack and breaks "best practices" as per Damiel Pfeiffer's presentation https://www.youtube.com/watch?v=rLopVhns4Zs&feature=youtu.be
-set(other_flags "${other_flags} -frtti -fvisibility-inlines-hidden")
-set(other_flags "${other_flags} -fvisibility=hidden")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${other_flags} -pthread")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-set(CTEST_CUSTOM_PRE_TEST "echo THIS IS PRE TEST")
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+##
+## INCLUDE
+##
+##
+include(ExternalProject)
+include(CMakePrintHelpers)
+##
+##
+## find packages
+##
 find_package(Threads REQUIRED)
+##
+## OPTIONS
+##
+option(TROG_BuildTests "Build the unit tests when BUILD_TESTING is enabled." ON)
+option(TROG_Install "Install CMake targets during install step." ON)
+option(TROG_Package "trog does not yet being installed as a cmake package" OFF)
+option(TROG_Verbose "Print trog related variables" ON)
+##
+## CONFIGURATION
+##
+include(GNUInstallDirs)
 
-set(TROG_LINK_LIBS 
-	Threads::Threads 
-	${VENDOR_DIR}/lib/libboost_filesystem.a 
-	)
+set(TROG_TARGET_NAME               ${PROJECT_NAME})
+set(TROG_CONFIG_INSTALL_DIR        "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" CACHE INTERNAL "")
+set(TROG_INCLUDE_INSTALL_DIR       "${CMAKE_INSTALL_INCLUDEDIR}")
+set(TROG_TARGETS_EXPORT_NAME       "${PROJECT_NAME}Targets")
+set(TROG_CMAKE_CONFIG_TEMPLATE     "cmake/config.cmake.in")
+set(TROG_CMAKE_CONFIG_DIR          "${CMAKE_CURRENT_BINARY_DIR}")
+set(TROG_CMAKE_VERSION_CONFIG_FILE "${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+set(TROG_CMAKE_PROJECT_CONFIG_FILE "${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}Config.cmake")
+set(TROG_CMAKE_PROJECT_TARGETS_FILE "${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}Targets.cmake")
 
-include(CTest) 
-enable_testing()
-	
-set(TROG_INCLUDE_DIRS 
-	SYSTEM ${PROJECT_DIR}/include ${VENDOR_DIR}/include)
-# find_program(iwyu_path NAMES include-what-you-use iwyu)
-# if(NOT iwyu_path)
-#   message(FATAL_ERROR "Could not find the program include-what-you-use")
+set(TROG_INCLUDE_BUILD_DIR "${PROJECT_SOURCE_DIR}/include/")
+message(STATUS "Using the header code from ${TROG_INCLUDE_BUILD_DIR}")
+
+set(TROG_VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
+message(STATUS "3rd Party dependencies are in ${TROG_VENDOR_DIR}")
+
+set(TROG_VENDOR_INCLUDE_DIR "${TROG_VENDOR_DIR}/include")
+message(STATUS "3rd Party dependencies HEADERS are in ${TROG_VENDOR_INCLUDE_DIR}")
+
+set(TROG_VENDOR_LIB_DIR "${TROG_VENDOR_DIR}/lib")
+message(STATUS "3rd Party dependencies LIBs are in ${TROG_VENDOR_LIB_DIR}")
+
+if (TROG_Verbose)
+    message("==============================================================================================")
+    message("TROG_TARGET_NAME                ${PROJECT_NAME}")
+    message("TROG_CONFIG_INSTALL_DIR         ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}" CACHE INTERNAL "")
+    message("TROG_INCLUDE_INSTALL_DIR        ${CMAKE_INSTALL_INCLUDEDIR}")
+    message("TROG_LIB_INSTALL_DIR            ${CMAKE_INSTALL_LIBDIR}")
+    message("TROG_TARGETS_EXPORT_NAME        ${PROJECT_NAME}Targets")
+    message("TROG_CMAKE_CONFIG_TEMPLATE      cmake/config.cmake.in")
+    message("TROG_CMAKE_CONFIG_DIR           ${CMAKE_CURRENT_BINARY_DIR}")
+    message("TROG_CMAKE_VERSION_CONFIG_FILE  ${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+    message("TROG_CMAKE_PROJECT_CONFIG_FILE  ${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}Config.cmake")
+    message("TROG_CMAKE_PROJECT_TARGETS_FILE ${TROG_CMAKE_CONFIG_DIR}/${PROJECT_NAME}Targets.cmake")
+    message("TROG_INCLUDE_BUILD_DIR          ${PROJECT_SOURCE_DIR}/include/")
+    message("TROG_VENDOR_DIR                 ${TROG_VENDOR_DIR}")
+    message("TROG_VENDOR_INCLUDE_DIR         ${TROG_VENDOR_INCLUDE_DIR}")
+    message("TROG_VENDOR_LIB_DIR             ${TROG_VENDOR_LIB_DIR}")
+
+    message("==============================================================================================")
+endif()
+
+##
+## TARGET
+## create target and add include path
+##
+add_library(${TROG_TARGET_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${TROG_TARGET_NAME} ALIAS ${TROG_TARGET_NAME})
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+    target_compile_features(${TROG_TARGET_NAME} INTERFACE cxx_range_for)
+else()
+    target_compile_features(${TROG_TARGET_NAME} INTERFACE cxx_std_17)
+endif()
+
+target_include_directories(
+    ${TROG_TARGET_NAME}
+    INTERFACE
+    $<BUILD_INTERFACE:${TROG_INCLUDE_BUILD_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
+
+set(TROG_DEPENDS_INCLUDE_DIR 
+    $<BUILD_INTERFACE:${TROG_VENDOR_INCLUDE_DIR}>
+    $<INSTALL_INTERFACE:include>
+)
+set(TROG_DEPENDS_LIB_DIR 
+    $<BUILD_PREFIX:${TROG_VENDOR_LIB_DIR}>
+    $<INSTALL_PREFIX:lib>
+)
+message("CMAKE_INSTALL_LIBDIR          ${CMAKE_INSTALL_LIBDIR}")
+message("TROG_DEPENDS_INCLUDE_DIR      ${TROG_DEPENDS_INCLUDE_DIR}")
+message("TROG_DEPENDS_LIB_DIR          ${TROG_DEPENDS_LIB_DIR}")
+set(X1 $<BUILD_INTERFACE:${TROG_INCLUDE_BUILD_DIR}>)
+set(X2 $<INSTALL_INTERFACE:include>)
+message("X1 ${X1}")
+message("X2 ${X2}")
+# ## add debug view definition file for msvc (natvis)
+# if (MSVC)
+#     set(NLOHMANN_ADD_NATVIS TRUE)
+#     set(NLOHMANN_NATVIS_FILE "nlohmann_json.natvis")
+#     target_sources(
+#         ${TROG_TARGET_NAME}
+#         INTERFACE
+#             $<INSTALL_INTERFACE:${NLOHMANN_NATVIS_FILE}>
+#             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NLOHMANN_NATVIS_FILE}>
+#     )
 # endif()
 
-message("TROG_INCLUDE_DIRS ${TROG_INCLUDE_DIRS}")
-message("TROG_LINK_DIRS ${TROG_LINK_DIRS}")
-# Optionally set things like CMAKE_CXX_STANDARD, CMAKE_POSITION_INDEPENDENT_CODE here
-# Let's ensure -std=c++xx instead of -std=g++xx
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+##
+## TESTS
+## create and configure the unit test target
+##
+include(CTest) #adds option BUILD_TESTING (default ON)
 
-add_subdirectory(tests)
-add_subdirectory(sample-app)
-add_subdirectory(performance)
+if(BUILD_TESTING AND TROG_BuildTests)
 
+    enable_testing()
+    add_subdirectory(tests)
+    add_subdirectory(performance)
+    add_subdirectory(sample-app)
+endif()
+
+##
+## INSTALL
+## install header files, generate and install cmake config files for find_package()
+##
+include(CMakePackageConfigHelpers)
+# use a custom package version config file instead of
+# write_basic_package_version_file to ensure that it's architecture-independent
+# https://github.com/nlohmann/json/issues/1697
+configure_file(
+    "cmake/trogConfigVersion.cmake.in"
+    ${TROG_CMAKE_VERSION_CONFIG_FILE}
+    @ONLY
+)
+configure_file(
+    ${TROG_CMAKE_CONFIG_TEMPLATE}
+    ${TROG_CMAKE_PROJECT_CONFIG_FILE}
+    @ONLY
+)
+
+if(TROG_Install)
+    install(
+        DIRECTORY ${TROG_INCLUDE_BUILD_DIR}
+        DESTINATION ${TROG_INCLUDE_INSTALL_DIR}
+    )
+    if(TROG_Package)
+        install(
+            FILES ${TROG_CMAKE_PROJECT_CONFIG_FILE} ${TROG_CMAKE_VERSION_CONFIG_FILE}
+            DESTINATION ${TROG_CONFIG_INSTALL_DIR}
+        )
+        if (NLOHMANN_ADD_NATVIS)
+            install(
+                FILES ${NLOHMANN_NATVIS_FILE}
+                DESTINATION .
+        )
+        endif()
+        export(
+            TARGETS ${TROG_TARGET_NAME}
+            NAMESPACE ${PROJECT_NAME}::
+            FILE ${TROG_CMAKE_PROJECT_TARGETS_FILE}
+        )
+        install(
+            TARGETS ${TROG_TARGET_NAME}
+            EXPORT ${TROG_TARGETS_EXPORT_NAME}
+            INCLUDES DESTINATION ${TROG_INCLUDE_INSTALL_DIR}
+        )
+        install(
+            EXPORT ${TROG_TARGETS_EXPORT_NAME}
+            NAMESPACE ${PROJECT_NAME}::
+            DESTINATION ${TROG_CONFIG_INSTALL_DIR}
+        )
+    endif()
+endif()

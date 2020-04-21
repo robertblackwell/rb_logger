@@ -4,8 +4,12 @@ add_executable(${TARGET}
 	../../include/trog/trog.hpp
 	# ../../include/trog/loglevel.cpp
 )
-target_include_directories(${TARGET} PUBLIC SYSTEM ${TROG_INCLUDE_DIRS})
-target_link_libraries(${TARGET} PUBLIC ${TROG_LINK_LIBS})
+target_include_directories(${TARGET} PUBLIC SYSTEM ${TROG_VENDOR_INCLUDE_DIR})
+target_link_libraries(${TARGET} PUBLIC 
+	trog::trog
+	Threads::Threads
+	${TROG_VENDOR_LIB_DIR}/libboost_filesystem.a
+	)
 
 set(TARGET2 user_thread_speed)
 add_executable(${TARGET2} 
@@ -13,5 +17,9 @@ add_executable(${TARGET2}
 	../../include/trog/trog.hpp
 	# ../../include/trog/loglevel.cpp
 )
-target_include_directories(${TARGET2} PUBLIC SYSTEM ${TROG_INCLUDE_DIRS})
-target_link_libraries(${TARGET2} PUBLIC ${TROG_LINK_LIBS})
+target_include_directories(${TARGET2} PUBLIC SYSTEM ${TROG_VENDOR_INCLUDE_DIR})
+target_link_libraries(${TARGET2} PUBLIC 
+	trog::trog
+	Threads::Threads
+	${TROG_VENDOR_LIB_DIR}/libboost_filesystem.a
+	)
