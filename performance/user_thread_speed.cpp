@@ -8,7 +8,7 @@
 
 namespace Trog {
 	typedef SinkFileT<SinkFileName> SinkIsAFile;
-	using Trogger = Collector<Formatter, SinkIsAFile, Thread::Writer>;
+	using Trogger = Collector<Formatter, SinkIsAFile, Simple::Writer>;
 };
 
 TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);

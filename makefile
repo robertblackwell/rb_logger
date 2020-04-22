@@ -1,7 +1,22 @@
 build-dir=cmake-build-debug
+install-prefix=
+
+check_install_prefix_defined = $(if $(value $(string ${install-prefix})),, $(error The variable 'install-prefix' is empty - set it on the command line))
+
+t:
+	$(check_install_prefix_defined)
+	@echo target t done
 
 build: ${build-dir}
-	cd ${build-dir}; cmake ..; make
+	cmake -S ./ -B ${build-dir}
+	cmake --build ${build-dir}
+
+build_to_install: ${build-dir}
+	cmake -DCCMAKE_INSTALL_PREFIX=${install-prefix} -S ./ -B ${build-dir} 
+	cmake --build ${build-dir}
+
+install: build_to_install
+	cmake --build ${build-dir} --target install
 
 ${build-dir}:
 	mkdir -p ${build-dir}
