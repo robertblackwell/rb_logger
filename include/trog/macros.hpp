@@ -23,7 +23,7 @@ namespace Trog {
 /**
  * should be called only in one file
  * */
-#ifdef TROG_GLOBAL_LEVEL            \
+#ifdef TROG_GLOBAL_LEVEL
     #define TROG_SET_GLOBAL_LEVEL(global_level) \
         Trog::LogLevelType TrogGlobalLevel = global_level; 
 #else
