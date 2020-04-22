@@ -23,17 +23,28 @@ namespace Trog {
 /**
  * should be called only in one file
  * */
-
-#define TROG_SET_GLOBAL_LEVEL(global_level) \
-    Trog::LogLevelType TrogGlobalLevel = global_level; \
-
+#ifdef TROG_GLOBAL_LEVEL            \
+    #define TROG_SET_GLOBAL_LEVEL(global_level) \
+        Trog::LogLevelType TrogGlobalLevel = global_level; 
+#else
+    #define TROG_SET_GLOBAL_LEVEL(global_level)
+#endif
 ///
 /// Should be callled in every compilation unit that uses logging
 ///
-#define TROG_SET_FILE_LEVEL(file_level)                         \
-    static Trog::LogLevelType TrogFileLevel = file_level;        \
-    extern Trog::LogLevelType TrogGlobalLevel;                  \
-    
+#ifdef TROG_GLOBAL_LEVEL
+
+    #define TROG_SET_FILE_LEVEL(file_level) \
+        static Trog::LogLevelType TrogFileLevel = file_level; \
+        extern Trog::LogLevelType TrogGlobalLevel; 
+
+#else                                                       \
+
+    #define TROG_SET_FILE_LEVEL(file_level)                         \
+        static Trog::LogLevelType TrogFileLevel = file_level;       \
+        static Trog::LogLevelType TrogGlobalLevel = file_level; \
+
+    #endif    
 
 #define TROG_COLLECT(level, ...) \
     Trog::Trogger::getInstance().collect(   \
