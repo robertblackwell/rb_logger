@@ -64,7 +64,7 @@ public:
     }
     void write_output(std::string output)
     {
-        std::cout << "STDOUT:[" << output << "]STDOUT" << std::endl <<std::flush;
+        std::cout << output  << std::endl <<std::flush;
     }
 };
 

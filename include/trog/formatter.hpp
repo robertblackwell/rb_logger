@@ -58,10 +58,10 @@ class Formatter: public FormatterInterface
         std::string ls = LogLevelText(level);
         os 
             << ls << "|"
-            #ifndef RBLOG_FILENAME
+            #ifdef RBLOG_FILENAME
             << s  
             #endif
-            #ifndef RBLOG_PIDTID
+            #ifdef RBLOG_PIDTID
             << "[" 
             <<pid 
             << ":" 

@@ -42,7 +42,7 @@ namespace Trog {
 
     #define TROG_SET_FILE_LEVEL(file_level)                         \
         static Trog::LogLevelType TrogFileLevel = file_level;       \
-        static Trog::LogLevelType TrogGlobalLevel = file_level; \
+        static Trog::LogLevelType TrogGlobalLevel = Trog::LogLevelVerbose|0b11111111; \
 
     #endif    
 
@@ -80,7 +80,7 @@ inline std::string ptoa(void* p)
 #define TROG_TRACE7(...)     TROG_COLLECT(Trog::LogLevelTrace7, ##__VA_ARGS__)
 #define TROG_TRACE8(...)     TROG_COLLECT(Trog::LogLevelTrace8, ##__VA_ARGS__)
 
-#define TROG_TRACE_FD(arg_fd)  TROG_COLLECT(Trog::LogLevelTrace8, "FD:", arg_fd)
+#define TROG_TRACE_FD(arg_fd)  TROG_COLLECT(Trog::LogLevelFDTrace, "FD:", arg_fd)
 #define TROG_TRACE_CTOR()  \
     do { \
         std::string tmp = ptoa((void*)this); \

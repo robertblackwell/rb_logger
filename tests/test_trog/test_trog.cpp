@@ -9,7 +9,7 @@ using Trogger = Collector<Formatter, SinkDefault, Simple::Writer>;
 }
 
 TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
-TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
+// TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
 
 
 class ATestClass
@@ -82,6 +82,8 @@ void testBitMask()
 	TCHECK(!b6);
 	bool b7 = testLevels(LogLevelCTorTrace, (LogLevelVerbose | LogLevelCTorTrace));
 	TCHECK(b7);
+	bool b8 = testLevels(LogLevelFDTrace, (LogLevelWarn | LogLevelCTorTrace | LogLevelFDTrace));
+	TCHECK(b8);
 }
 
 void displayBitMask()

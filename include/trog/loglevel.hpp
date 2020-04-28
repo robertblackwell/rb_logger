@@ -165,6 +165,7 @@ inline bool levelIsActive(LogLevelType level, LogLevelType file_threshold, LogLe
 {
 
     if (testLevelIsActive(level, file_threshold)) {
+        // return true;
         if (testLevelIsActive(level, global_threshold)) {
             return true;
         } else {
