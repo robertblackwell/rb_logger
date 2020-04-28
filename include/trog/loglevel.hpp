@@ -105,10 +105,10 @@ inline std::string LogLevelText(Trog::LogLevelType level)
         adjusted_level = (level & traceMask);
         switch(adjusted_level) {
             case Trog::LogLevelCTorTrace:
-                return "TOR";
+                return "CTOR";
                 break;
             case Trog::LogLevelFDTrace:
-                return "FD ";
+                return "FD__";
                 break;
             case Trog::LogLevelTrace3:
                 return "TRC3";
