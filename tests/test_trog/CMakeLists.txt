@@ -1,6 +1,6 @@
 set(TARGET test_trog)
 add_executable(${TARGET} 
-	test_trog_2.cpp
+	test_stand_alone.cpp
 )
 
 target_include_directories(${TARGET} 

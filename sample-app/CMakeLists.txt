@@ -5,6 +5,7 @@ add_executable(${TARGET}
 	class_b.cpp
 	# ../../include/trog/loglevel.cpp
 )
+target_compile_options(${TARGET} PUBLIC "$<$<CONFIG:DEBUG>:${MY_DEBUG_OPTIONS}>")
 target_include_directories(${TARGET} PUBLIC SYSTEM ./ ${TROG_VENDOR_INCLUDE_DIR} )
 target_link_libraries(${TARGET} PUBLIC
 	trog::trog

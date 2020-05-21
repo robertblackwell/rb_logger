@@ -1,13 +1,14 @@
+#include <trog/loglevel.hpp>
+#define TROG_FILE_LEVEL ( TROG_LEVEL_INFO | TROG_LEVEL_TRACE3)
+#include "configure_trog.hpp"
 #include "class_a.hpp"
 
 #include <string>
 #include <sstream>
-#include <trog/trog.hpp>
 
 // if this line is not present this file will not compile as variable TrogFileLevel
 // will not be defined.
 // This line sets the logging fileter for this file
-TROG_SET_FILE_LEVEL(Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelVerbose);
 
 AClass::AClass()
 {

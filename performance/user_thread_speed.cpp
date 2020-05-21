@@ -1,9 +1,5 @@
-#include <bitset>
-#include <algorithm> 
-#include <stdio.h>
-#include <locale>
-#include <chrono> 
-#include <iostream> 
+#define TROG_ENABLE_FILE_LEVEL
+#define TROG_ENABLE_GLOBAL_LEVEL
 #include <trog/trog.hpp>
 
 namespace Trog {
@@ -13,6 +9,12 @@ namespace Trog {
 
 TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
 TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
+#include <bitset>
+#include <algorithm> 
+#include <stdio.h>
+#include <locale>
+#include <chrono> 
+#include <iostream> 
 
  
  using namespace std::chrono;

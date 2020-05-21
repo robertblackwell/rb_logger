@@ -48,9 +48,7 @@ struct LogCallData
 }
 };
 
-
 using LogCallDataSPtr = std::shared_ptr<LogCallData>;
-
 
 } // namespace
 #endif

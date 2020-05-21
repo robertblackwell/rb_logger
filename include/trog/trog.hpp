@@ -8,6 +8,7 @@
 #include <boost/filesystem.hpp>
 
 #include <trog/loglevel.hpp>
+#include <trog/loglevel_impl.hpp>
 #include <trog/call_data.hpp>
 #include <trog/formatter.hpp>
 #include <trog/writer_simple.hpp>

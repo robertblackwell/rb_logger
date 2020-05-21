@@ -1,12 +1,11 @@
+#include <trog/loglevel.hpp>
+#define TROG_FILE_LEVEL (TROG_LEVEL_CTOR | TROG_LEVEL_VERBOSE)
+#include "configure_trog.hpp"
+
 #include "class_b.hpp"
 
 #include <string>
 #include <sstream>
-#include <trog/trog.hpp>
-
-// if this line is not present this file will not compile as variable TrogFileLevel
-// will not be defined
-TROG_SET_FILE_LEVEL(Trog::LogLevelCTorTrace|Trog::LogLevelTrace4|Trog::LogLevelVerbose);
 
 BClass::BClass()
 {

@@ -1,33 +1,14 @@
-#include <bitset>
-#include <doctest/doctest.h>
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <boost/filesystem.hpp>
 #include <trog/trog.hpp>
-
 namespace Trog {
 using Trogger = Collector<Formatter, SinkDefault, Simple::Writer>;
 }
 
 TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
-// TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
+#include <bitset>
+#include <doctest/doctest.h>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <boost/filesystem.hpp>
 
-
-class ATestClass
-{
-	public:
-	ATestClass()
-	{
-		TROG_TRACE_CTOR();
-	}		
-	void doSomething()
-	{
-		TROG_DEBUG("Inside doSomething");
-	}
-	~ATestClass()
-	{
-		TROG_TRACE_CTOR();
-	}
-};
 
 // bool testLevels(Trog::LogLevel level, Trog::LogLevel threshold )
 bool testLevels(long level, long threshold )
@@ -103,45 +84,6 @@ void displayBitMask()
 }
 
 
-void testLevelText()
-{
-	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelError) << std::endl;
-	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelWarn) << std::endl;
-	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelInfo) << std::endl;
-	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelDebug) << std::endl;
-	std::cout << "Trogger text " << Trog::LogLevelText(Trog::LogLevelVerbose) << std::endl;
-	std::cout << "Trogger text expected TOR " << Trog::LogLevelText(Trog::LogLevelCTorTrace) << std::endl;
-	std::cout << "Trogger text expected TRC " << Trog::LogLevelText(Trog::LogLevelTrace4) << std::endl;
-	std::cout << "Trogger text exoected FD " << Trog::LogLevelText(Trog::LogLevelFDTrace) << std::endl;
-}
-TEST_CASE("level text")
-{
-	std::string tmp;
-	tmp = Trog::LogLevelText(Trog::LogLevelError);
-	CHECK( (std::string("ERR") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelWarn);
-	CHECK( (std::string("WRN") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelInfo);
-	CHECK( (std::string("INF") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelDebug);
-	CHECK( (std::string("DBG") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelVerbose);
-	CHECK( (std::string("VER") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelCTorTrace);
-	CHECK( (std::string("TOR") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelFDTrace);
-	CHECK( (std::string("FD ") == tmp));
-
-	tmp = Trog::LogLevelText(Trog::LogLevelTrace7);
-	CHECK( (std::string("TRC") == tmp));
-
-}
 int notmain()
 {
 

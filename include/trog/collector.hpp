@@ -23,6 +23,9 @@ namespace Trog {
 template<typename F, typename S, template<typename ...>class W>
 class Collector: W<F, S>
 {
+private:
+    LogLevelType m_global_threshold;
+
 public:
 
     static Collector& getInstance()
@@ -33,18 +36,26 @@ public:
 
     Collector()
     {
-        std::cout << "Collector destructor" << std::endl;
+        std::cout << "Trog::Collector destructor" << std::endl;
+        m_global_threshold = LogLevelAll;
     }
     ~Collector()
     {
-        std::cout << "Collector destructor" << std::endl;
+        std::cout << "Trog::Collector destructor" << std::endl;
     }
     
+    void set_threshold(LogLevelType threshold)
+    {
+        m_global_threshold = threshold;
+    }
+    LogLevelType get_threshold()
+    {
+        return m_global_threshold;
+    }
+
     template<typename T, typename... Types>
     void collect(
         LogLevelType level,
-        LogLevelType file_threshold,
-        LogLevelType global_threshold,
         const char* channel,
         const char* file_name,
         const char* func_name,
@@ -52,7 +63,8 @@ public:
         const T& firstArg,
         const Types&... args)
     {
-        if(!levelIsActive(level, file_threshold, global_threshold)) {
+        LogLevelType file_threshold = LogLevelAll;
+        if(!levelIsActive(level, file_threshold, m_global_threshold)) {
             return;
         }
         LogCallDataSPtr call_sptr = std::make_shared<LogCallData>(
@@ -85,9 +97,20 @@ public:
     {
         W<F,S>::wait();
     }
-private:
 
 }; //class   
+
+//template<typename F, typename S, template<typename ...>class W>
+//void set_level(LogLevelType threshold)
+//{
+//    Collector<F,S,W>::getInstance().set_threshold(threshold);
+//}
+//template<typename F, typename S, template<typename ...>class W>
+//LogLevelType get_level()
+//{
+//    return Collector<F,S,W>::getInstance().get_threshold();
+//}
+
 
 } // namespace
 #endif
