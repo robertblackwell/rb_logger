@@ -22,6 +22,11 @@
 #define TROG_ENABLED
 #endif
 
+#if !defined(TROG_FILE_LEVEL)
+#error TROG FILE LEVEL not defined - this macro must be defined in every compilation unit that includes trog.hpp anywhere in its header chain
+#endif
+
+
 #ifdef TROG_ENABLED
     #define TROG_COLLECT(level, ...) \
         Trog::Trogger::getInstance().collect(   \

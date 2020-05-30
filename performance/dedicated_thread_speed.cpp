@@ -1,14 +1,7 @@
-#define TROG_ENABLE_FILE_LEVEL
-#define TROG_ENABLE_GLOBAL_LEVEL
-#include <trog/trog.hpp>
+#include <trog/loglevel.hpp>
+#define TROG_FILE_LEVEL TROG_LEVEL_VERBOSE
+#include "../sample-app/configure_trog.hpp"
 
-namespace Trog {
-	typedef SinkFileT<SinkFileName> SinkIsAFile;
-	using Trogger = Collector<Formatter, SinkIsAFile, Thread::Writer>;
-};
-
-TROG_SET_FILE_LEVEL(Trog::LogLevelVerbose);
-TROG_SET_GLOBAL_LEVEL(Trog::LogLevelVerbose|Trog::LogLevelCTorTrace|Trog::LogLevelTrace3|Trog::LogLevelTrace4);
 #include <bitset>
 #include <algorithm> 
 #include <stdio.h>

@@ -104,15 +104,12 @@ inline bool testLevelIsActive(LogLevelType level, LogLevelType threshold )
 inline bool levelIsActive(LogLevelType level, LogLevelType file_threshold, LogLevelType global_threshold)
 {
 
-    if (testLevelIsActive(level, file_threshold)) {
-        // return true;
-        if (testLevelIsActive(level, global_threshold)) {
-            return true;
-        } else {
-            return false;
-        }
+    if (testLevelIsActive(level, global_threshold)) {
+        return true;
+    } else {
+        return false;
     }
-    return false;
+
 }
 
 } // namespace

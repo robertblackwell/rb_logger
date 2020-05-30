@@ -15,14 +15,18 @@
 ///
 
 /// to disable Trog uncomment the following line
-#define TROG_DISABLE
+//#define TROG_DISABLE
 #include <trog/loglevel.hpp>
-#define TROG_FILE_LEVEL (TROG_LEVEL_DEBUG | TROG_LEVEL_TRACE3 | TROG_LEVEL_CTOR )
+#define TROG_FILE_LEVEL (TROG_LEVEL_VERBOSE | TROG_LEVEL_TRACE3 | TROG_LEVEL_CTOR )
 #include "configure_trog.hpp"
 
 #include "class_a.hpp"
 #include "class_b.hpp"
 
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
+
+#pragma message "file lvel is : " STR(TROG_FILE_LEVEL)
 
 ///
 /// This macro needs to be called in exactly one compilation unit.
@@ -46,12 +50,12 @@ int main()
     ///
     /// This level may be changed during the running of a program.`
     ///
-    Trog::set_level(TROG_LEVEL_TRACE4 | TROG_LEVEL_TRACE6 | TROG_LEVEL_WARN);
+    Trog::set_level(TROG_LEVEL_TRACE3 | TROG_LEVEL_TRACE6 | TROG_LEVEL_VERBOSE);
     TROG_INFO("Entered main");
     TROG_VERBOSE("Iam verbose")
     TROG_TRACE3("from main")
     
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 10; i++) { 
         AClass a{};
         BClass b{};
         a.a_func(i);
