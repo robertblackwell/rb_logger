@@ -51,7 +51,7 @@ class Sinkstdout;
 
 using SinkstdoutSPtr = std::shared_ptr<Sinkstdout>;
 
-class Sinkstdout
+class Sinkstdout: public SinkInterface
 {
 public:
     static SinkstdoutSPtr New()
@@ -71,7 +71,7 @@ public:
 class Sinkstderr;
 typedef std::shared_ptr<Sinkstderr> SinkstderrSPtr;
 
-class Sinkstderr
+class Sinkstderr: public SinkInterface
 {
 public:
     static SinkstderrSPtr make()
@@ -85,7 +85,7 @@ public:
 };
 
 template <typename N>
-class SinkFileT: public N
+class SinkFileT: public N, SinkInterface
 {
 public:
     static std::shared_ptr<SinkFileT> make()
@@ -110,7 +110,7 @@ private:
 typedef SinkFileT<SinkFileName> SinkFile;
 
 template<typename S1>
-class Sink1: public S1
+class Sink1: public S1, public SinkInterface
 {
     public:
     static std::shared_ptr<Sink1> make()
@@ -124,7 +124,7 @@ class Sink1: public S1
 };
 
 template<typename S1, typename S2>
-class Sink2: public S1, public S2
+class Sink2: public S1, public S2, public SinkInterface
 {
     public:
     static std::shared_ptr<Sink2> make()

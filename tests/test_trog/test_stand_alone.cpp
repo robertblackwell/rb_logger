@@ -192,18 +192,10 @@ void test_this_file()
     TCHECK(!b)
     b = Trog::testLevelIsActive(TROG_LEVEL_FDTRACE, TROG_FILE_LEVEL);
     TCHECK(!b)
-    auto x1 = Trog::get_level();
-    b = Trog::testLevelIsActive(TROG_LEVEL_DEBUG, x1);
-    TCHECK(b)
-    Trog::set_level(TROG_LEVEL_INFO);
-    auto x2 = Trog::get_level();
-    // a few lines earlier this next line produced true
-    b = Trog::testLevelIsActive(TROG_LEVEL_DEBUG, x2);
-    TCHECK(!b)
 }
 int main()
 {
-
+    Trog::Trogger::get_instance().set_threshold(TROG_LEVEL_TRACE3 | TROG_LEVEL_TRACE6 | TROG_LEVEL_VERBOSE);
 	displayBitMask();
     testBitMask();
 	testLevelText();

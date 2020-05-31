@@ -14,6 +14,7 @@ namespace Trog {
 
 class FormatterInterface
 {
+public:
     virtual std::string format(LogCallDataSPtr data_sptr) = 0;
 };
 

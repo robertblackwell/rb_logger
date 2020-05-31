@@ -18,6 +18,7 @@
 //#define TROG_DISABLE
 #include <trog/loglevel.hpp>
 #define TROG_FILE_LEVEL (TROG_LEVEL_VERBOSE | TROG_LEVEL_TRACE3 | TROG_LEVEL_CTOR )
+#define TROG_IMPL
 #include "configure_trog.hpp"
 
 #include "class_a.hpp"
@@ -50,7 +51,8 @@ int main()
     ///
     /// This level may be changed during the running of a program.`
     ///
-    Trog::set_level(TROG_LEVEL_TRACE3 | TROG_LEVEL_TRACE6 | TROG_LEVEL_VERBOSE);
+
+    Trog::Trogger::get_instance().set_threshold(TROG_LEVEL_TRACE3 | TROG_LEVEL_TRACE6 | TROG_LEVEL_VERBOSE);
     TROG_INFO("Entered main");
     TROG_VERBOSE("Iam verbose")
     TROG_TRACE3("from main")

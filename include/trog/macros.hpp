@@ -16,6 +16,7 @@
 #include <trog/writer_threaded.hpp>
 #include <trog/writer_simple.hpp>
 
+
 #ifdef TROG_DISABLE
 #undef TROG_ENABLED
 #else
@@ -29,7 +30,7 @@
 
 #ifdef TROG_ENABLED
     #define TROG_COLLECT(level, ...) \
-        Trog::Trogger::getInstance().collect(   \
+        Trog::Trogger::get_instance().collect(   \
             level, \
             "justafiller", \
             __FILE__, \

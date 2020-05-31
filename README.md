@@ -19,7 +19,9 @@ The aim of the rewrite is not latency performance, my needs are sufficiently ped
 
 4.  An intriguing idea is to have a backend/writer process rather a writer thread. That way the writer (and the queue mechanism) can persisit even if the application aborts and ensure that all log data that got to the queue mechaism will get written. If I get the time to try this I will almost certainly use IPC message queues (see boost) as the queue mechanism. Shared memory (again see boost) would probably give superior performance but seems like a long learning curve. 
 
-Finally I am interested in using this project as a vehicle for leaning about templates, Policy classes and how to use template classes as an alternative to abstract inheritence.
+~~Finally I am interested in using this project as a vehicle for leaning about templates, Policy classes and how to use template classes as an alternative to abstract inheritence.~~
+
+At one point (V2.0.0) this project used the concepts of policy templates to provide the mechanism for choosing Sink, Format and Worker thread mechanism. However I eventually discovered that for one of my library projects I needed to be able to make different choices for different executables without recompiling the library. This forced me to make such choices at run-time and hence to abandon compile time polymorphism for more traditional inheritence. 
 
 Interesting note:
 
