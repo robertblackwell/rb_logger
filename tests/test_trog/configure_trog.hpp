@@ -91,5 +91,10 @@ public:
         std::cout << "hello" << std::endl;
     }
 };
+inline Trogger& get_trogger_instance()
+{
+    static Trogger instance;
+    return instance;
+}
 }
 #endif

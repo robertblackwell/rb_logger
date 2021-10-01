@@ -85,7 +85,7 @@ public:
 };
 
 template <typename N>
-class SinkFileT: public N, SinkInterface
+class SinkFileT: public N, public SinkInterface
 {
 public:
     static std::shared_ptr<SinkFileT> make()
@@ -110,8 +110,9 @@ private:
 typedef SinkFileT<SinkFileName> SinkFile;
 
 template<typename S1>
-class Sink1: public S1, public SinkInterface
+class Sink1: public SinkInterface
 {
+    S1 m_s1;
     public:
     static std::shared_ptr<Sink1> make()
     {
@@ -119,13 +120,15 @@ class Sink1: public S1, public SinkInterface
     }
     void write_output(std::string output)
     {
-        S1::write_output(output);
+        m_s1.write_output(output);
     }
 };
 
 template<typename S1, typename S2>
-class Sink2: public S1, public S2, public SinkInterface
+class Sink2: public SinkInterface
 {
+    S1 m_s1;
+    S2 m_s2;
     public:
     static std::shared_ptr<Sink2> make()
     {
@@ -133,8 +136,8 @@ class Sink2: public S1, public S2, public SinkInterface
     }
     void write_output(std::string output)
     {
-        S1::write_output(output);
-        S2::write_output(output);
+        m_s1.write_output(output);
+        m_s2.write_output(output);
     }
 };
 

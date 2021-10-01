@@ -30,7 +30,7 @@
 
 #ifdef TROG_ENABLED
     #define TROG_COLLECT(level, ...) \
-        Trog::Trogger::get_instance().collect(   \
+        Trog::get_trogger_instance().collect(   \
             level, \
             "justafiller", \
             __FILE__, \

@@ -24,10 +24,10 @@
 #include "class_a.hpp"
 #include "class_b.hpp"
 
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-
-#pragma message "file lvel is : " STR(TROG_FILE_LEVEL)
+// #define STR_HELPER(x) #x
+// #define STR(x) STR_HELPER(x)
+//
+// #pragma message "file lvel is : " STR(TROG_FILE_LEVEL)
 
 ///
 /// This macro needs to be called in exactly one compilation unit.
@@ -56,8 +56,8 @@ int main()
     TROG_INFO("Entered main");
     TROG_VERBOSE("Iam verbose")
     TROG_TRACE3("from main")
-    
-    for(int i = 0; i < 10; i++) { 
+
+    for(int i = 0; i < 10; i++) {
         AClass a{};
         BClass b{};
         a.a_func(i);

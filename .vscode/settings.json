@@ -76,5 +76,12 @@
         "valarray": "cpp",
         "variant": "cpp"
     },
-    "workbench.tree.indent": 24
+    "workbench.tree.indent": 24,
+    "files.watcherExclude": {
+        "**/cloned_repos/**": true,
+        "**/cmake-build**/**": true,
+        "**/stage/**": true,
+        "**/vendor/**": true
+    },
+    "cmake.configureOnOpen": true
 }

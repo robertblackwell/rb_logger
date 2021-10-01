@@ -9,6 +9,9 @@ vendor_saved/
 vendor-saved/
 vendor-**/
 
+.smpl_cache/
+.smpl_cache/**
+
 external_code/cloned_repos
 external_code/**/log
 externa_code/stage**/
@@ -25,6 +28,13 @@ deps/lib/
 deps/lib
 
 packages/
+
+scripts*/
+scripts-*/
+scripts-*/cloned_repos/
+scripts-*/stage/
+scripts-*/stage/*
+scripts-*/cloned_repos/*.tar.gz
 
 scripts/cloned_repos/
 scripts/stage/

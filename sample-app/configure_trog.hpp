@@ -8,6 +8,9 @@
 /// This file selects the Formatter, Sink and Worker that you require for you application.
 ///   
 ///
+class Trogger;
+Trogger* get_trogger_instance();
+
 #include <trog/trog.hpp>
 
 namespace Trog {
@@ -75,6 +78,7 @@ namespace Trog {
     ///
     /// Trogger : to change the choice of Sink and Worker change the details of this class.
     ///
+
     class Trogger : public Logger
     {
         Formatter       m_fmter;
@@ -91,5 +95,10 @@ namespace Trog {
             std::cout << "hello" << std::endl;
         }
     };
+    inline Trogger& get_trogger_instance()
+    {
+        static Trogger instance;
+        return instance;
+    }
 }
 #endif

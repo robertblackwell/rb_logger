@@ -1,6 +1,35 @@
 #include <trog/loglevel.hpp>
 #define TROG_FILE_LEVEL TROG_LEVEL_VERBOSE
-#include "../sample-app/configure_trog.hpp"
+#include <trog/trog.hpp>
+
+namespace Trog {
+
+typedef SinkFileT<SinkFileName> SinkIsAFile;
+typedef Sinkstdout SinkIsStdout;
+typedef Sink2<Sinkstdout, SinkIsAFile> SinkIsAFileAndStdout;
+// define our Trogger - uses dedicated task and rites to a file and cout
+
+class Trogger : public Logger
+{
+    Formatter               m_fmter;
+    SinkIsAFileAndStdout    m_sink;
+    Thread::Writer          m_writer;// = new ::Trog::Simple::Writer(fmter, sink);
+public:
+    static Trogger& get_instance()
+    {
+        static Trogger instance;
+        return instance;
+    }
+    Trogger(): m_writer(Thread::Writer(&m_fmter, &m_sink)), Logger(&m_writer, &m_fmter)
+    {
+        std::cout << "hello" << std::endl;
+    }
+};
+inline Trogger& get_trogger_instance()
+{
+    return Trogger::get_instance();
+}
+}
 
 #include <bitset>
 #include <algorithm> 
@@ -24,7 +53,7 @@ void speed_test()
 	std::string s2 = "Thisisstring2";
 	std::string s3 = "Thisisstring3";
 	std::string s4 = "Thisisstring4";
-	int number_iterations = 1000000;
+	int number_iterations = 1000;//000;
 
 	std::cout.imbue(std::locale(""));
 	
@@ -45,6 +74,8 @@ void speed_test()
 
 int main()
 {
+    std::cout << "starting main" << std::endl;
+    Trog::get_trogger_instance().set_threshold(TROG_LEVEL_ALL);
 	speed_test();
 	std::cout << "leaving main" << std::endl;
 

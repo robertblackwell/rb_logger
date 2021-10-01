@@ -23,7 +23,7 @@ namespace Trog {
 class Logger
 {
 private:
-    LogLevelType m_global_threshold;
+    LogLevelType        m_global_threshold;
     WriterInterface*    m_writer_ptr;
     Formatter*          m_formatter_ptr;
 
