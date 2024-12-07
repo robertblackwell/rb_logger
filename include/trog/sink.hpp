@@ -6,13 +6,13 @@
 #include <fstream>
 #include <memory>
 #include <vector>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
 #include <ctime>
 
-using namespace boost::filesystem;
+using namespace fs;
 
 namespace Trog {
 

@@ -19,7 +19,7 @@
 #include "configure_trog.hpp"
 
 #include <bitset>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 
 // TROG_SET_GLOBAL_LEVEL(TROG_LEVEL_VERBOSE|Trog::TROG_LEVEL_CTOR|TROG_LEVEL_TRACE3|TROG_LEVEL_TRACE4);
 

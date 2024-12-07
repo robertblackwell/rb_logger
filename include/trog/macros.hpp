@@ -6,7 +6,7 @@
 #include <set>
 #include <string>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 
 #include <trog/loglevel.hpp>
 #include <trog/call_data.hpp>

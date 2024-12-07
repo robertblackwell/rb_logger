@@ -6,7 +6,8 @@
 #include <set>
 #include <cstdint>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <functional>
+#include <trog/filesystem.hpp>
 #include <trog/loglevel.hpp>
 
 

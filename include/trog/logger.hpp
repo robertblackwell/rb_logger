@@ -6,7 +6,7 @@
 #include <set>
 #include <cstdint>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 #include <trog/call_data.hpp>
 #include <trog/formatter.hpp>
 #include <trog/writer_interface.hpp>

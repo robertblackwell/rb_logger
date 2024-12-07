@@ -5,9 +5,6 @@
   "dependencies": [
     {
       "name": "doctest", "version": "2.3.7"
-    },
-    { 
-      "name": "boost", "version": "1.72.0"
     }
   ]
 }

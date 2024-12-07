@@ -1,12 +1,13 @@
 #ifndef trog_guard_collector_HPP
 #define trog_guard_collector_HPP
 //
+#include <unistd.h>
 #include <iostream>
 #include <sstream>
 #include <set>
 #include <cstdint>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 #include <trog/call_data.hpp>
 #include <trog/formatter.hpp>
 #include <trog/writer_threaded.hpp>

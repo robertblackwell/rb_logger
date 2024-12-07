@@ -61,7 +61,6 @@ void terminate_handler()
 int main()
 {
 	wsptr = std::make_shared<Writer>();
-	std::set_unexpected(unexpected_handler);
 	std::set_terminate(terminate_handler);
 	std::atexit(exit_handler);
 

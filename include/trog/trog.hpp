@@ -5,7 +5,7 @@
 #include <sstream>
 #include <set>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 
 #include <trog/loglevel.hpp>
 #include <trog/loglevel_impl.hpp>

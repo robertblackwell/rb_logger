@@ -6,7 +6,7 @@
 #include <set>
 #include <cstdint>
 #include <pthread.h>
-#include <boost/filesystem.hpp>
+#include <trog/filesystem.hpp>
 #include <trog/call_data.hpp>
 #include <trog/loglevel.hpp>
 
@@ -54,7 +54,7 @@ class Formatter: public FormatterInterface
         std::string function_name,
         long linenumber
     ){
-        boost::filesystem::path p(filename);
+        fs::path p(filename);
         std::string s = p.filename().string();
         std::string ls = LogLevelText(level);
         os 
